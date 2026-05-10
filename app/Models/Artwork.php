@@ -1,0 +1,92 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+
+#[Fillable(['user_id', 'title', 'description', 'image', 'type', 'form', 'is_published', 'published_at'])]
+class Artwork extends Model
+{
+    use HasFactory;
+
+    /**
+     * Mass assignment yang dibolehkan.
+     *
+     * @var array<string>
+     */
+    protected $fillable = [
+        'user_id',
+        'title',
+        'description',
+        'image',
+        'type',
+        'form',
+        'is_published',
+        'published_at',
+    ];
+
+    /**
+     * Cast values untuk atribut.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'is_published' => 'boolean',
+        'published_at' => 'datetime',
+    ];
+
+    /**
+     * Get the user who created this artwork.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Scopes untuk query optimization
+     */
+
+    /**
+     * Filter berdasarkan status publish
+     */
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true);
+    }
+
+    /**
+     * Filter berdasarkan tipe artwork
+     */
+    public function scopeByType($query, $type)
+    {
+        return $query->where('type', $type);
+    }
+
+    /**
+     * Filter berdasarkan form artwork
+     */
+    public function scopeByForm($query, $form)
+    {
+        return $query->where('form', $form);
+    }
+
+    /**
+     * Filter berdasarkan user
+     */
+    public function scopeByUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
+    /**
+     * Search artwork berdasarkan title atau description
+     */
+    public function scopeSearch($query, $keyword)
+    {
+        return $query->where('title', 'like', "%{$keyword}%")
+                     ->orWhere('description', 'like', "%{$keyword}%");
+    }
+}
