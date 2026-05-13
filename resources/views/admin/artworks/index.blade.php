@@ -73,7 +73,7 @@
                             <th>Form</th>
                             <th>Status</th>
                             <th>Upload</th>
-                            <th>Artis</th>
+                            <th>Art For</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -102,7 +102,7 @@
                                     @endif
                                 </td>
                                 <td>{{ $artwork->created_at->format('d M Y') }}</td>
-                                <td>{{ $artwork->user->name ?? 'Unknown' }}</td>
+                                <td>{{ $artwork->art_for ?? 'myself' }}</td>
                                 <td class="actions">
                                     <a href="{{ route('admin.artworks.show', $artwork) }}" class="button button-outline button-sm">Detail</a>
                                     <a href="{{ route('admin.artworks.edit', $artwork) }}" class="button button-soft button-sm">Edit</a>

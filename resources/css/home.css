@@ -29,6 +29,10 @@ nav{
     height: 100%;
     z-index: 1000;
 }
+
+html {
+  scroll-behavior: smooth;
+}
 .mainav{
     display: flex;
     justify-content: center;
@@ -258,8 +262,22 @@ header > * {
         width: 400px;
     }
 }
-
 @media (max-width: 1024px) {
+    .img img{
+        height: 60vw;
+    }
+
+    .img{
+        left: 25vw;
+        top: 450px;
+    }
+
+    .mainheader img{
+        width: 40vw;
+    }
+}
+
+@media (max-width: 768px) {
     .img{
         position: static;
         transform: none;
@@ -272,7 +290,7 @@ header > * {
     }
     .mainheader img.mobile{
         display: block;
-        width: 600px;
+        width: 80vw;
     }
 
     
@@ -308,13 +326,17 @@ header > * {
         color: var(--black);
         cursor: pointer;
     }
+
+    .text img{
+        width: 80vw;
+    }
 }
 
 
 
 @media (max-width: 651px) {
     .mainheader img.mobile{
-        width: 300px;
+        width: 80vw;
     }
     .img img{
         height: 80vh;

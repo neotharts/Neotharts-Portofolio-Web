@@ -83,8 +83,14 @@ class ArtworkController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // Max 5MB
             'type' => 'required|in:komisi,personal,organisasi,fanart',
             'form' => 'required|in:chibi,headshot,halfbody,fullbody',
+            'art_for' => 'nullable|string|max:255',
             'is_published' => 'boolean',
         ]);
+
+        // Default art_for ke 'myself' jika kosong
+        if (empty($validated['art_for'])) {
+            $validated['art_for'] = 'myself';
+        }
 
         try {
             // Upload image
@@ -158,8 +164,14 @@ class ArtworkController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'type' => 'required|in:komisi,personal,organisasi,fanart',
             'form' => 'required|in:chibi,headshot,halfbody,fullbody',
+            'art_for' => 'nullable|string|max:255',
             'is_published' => 'boolean',
         ]);
+
+        // Default art_for ke 'myself' jika kosong
+        if (empty($validated['art_for'])) {
+            $validated['art_for'] = 'myself';
+        }
 
         try {
             // Upload image baru jika ada

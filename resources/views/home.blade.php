@@ -7,14 +7,68 @@
     <title>Document</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     @vite('resources/css/home.css')
+    <style>
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #f7f1ea;
+            border-top: 4px solid var(--orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            color: var(--black);
+            font-weight: 500;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Loading...</p>
+        </div>
+    </div>
+
     <nav>
         <div class="mainav">
-            <a href="">Home</a>
-            <a href="">Artworks</a>
-            <a href="">Commissions</a>
-            <a href="">Contact</a>
+            <a href="/">Home</a>
+            <a href="/artworks">Artworks</a>
+            <a href="/commissions">Commissions</a>
+            <a href="/contact">Contact</a>
         </div>
         <div class="mainavmobile">
             <span class="material-icons">menu</span>
@@ -65,9 +119,21 @@
 
             <div class="kotak"></div>
         </div>
+        <div class="bottommore">
+                <a href="/artworks"> See more </a>
+        </div>
     </section>
 
     <script>
+        // Hide loading screen when page is fully loaded
+        window.addEventListener('load', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            loadingScreen.classList.add('hidden');
+            setTimeout(() => {
+                loadingScreen.remove();
+            }, 500);
+        });
+
         async function trackVisitor() {
             try {
                 await fetch('{{ route('visitor.track') }}', {

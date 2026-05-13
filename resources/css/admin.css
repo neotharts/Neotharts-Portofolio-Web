@@ -907,6 +907,52 @@ input[type="file"] {
     font-size: 0.92rem;
 }
 
+/* Tag Preview */
+.tag-preview {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.type-tag {
+    display: inline-flex;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.type-tag.tag-komisi,
+.type-tag.tag-commission {
+    background: rgba(255, 149, 67, 0.12);
+    color: #c6631f;
+}
+
+.type-tag.tag-personal {
+    background: rgba(255, 204, 153, 0.22);
+    color: #a66e33;
+}
+
+.type-tag.tag-organisasi {
+    background: rgba(255, 224, 188, 0.24);
+    color: #8a5a39;
+}
+
+.type-tag.tag-fanart {
+    background: rgba(255, 235, 210, 0.28);
+    color: #7d5c44;
+}
+
+.type-tag.tag-chibi,
+.type-tag.tag-headshot,
+.type-tag.tag-halfbody,
+.type-tag.tag-fullbody {
+    background: rgba(255, 149, 67, 0.18);
+    color: #c76122;
+}
+
 @media (max-width: 1024px) {
     .filter-form {
         grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -56,8 +56,8 @@
                 </div>
 
                 <div class="info-group">
-                    <h3>Artis</h3>
-                    <p>{{ $artwork->user->name ?? 'Unknown' }}</p>
+                    <h3>Art For</h3>
+                    <p>{{ $artwork->art_for ?? 'myself' }}</p>
                 </div>
 
                 <div class="info-group">

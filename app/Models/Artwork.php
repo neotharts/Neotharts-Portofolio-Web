@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['user_id', 'title', 'description', 'image', 'type', 'form', 'is_published', 'published_at'])]
+#[Fillable(['user_id', 'title', 'description', 'image', 'type', 'form', 'art_for', 'is_published', 'published_at'])]
 class Artwork extends Model
 {
     use HasFactory;
@@ -23,6 +23,7 @@ class Artwork extends Model
         'image',
         'type',
         'form',
+        'art_for',
         'is_published',
         'published_at',
     ];

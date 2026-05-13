@@ -52,7 +52,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="type">Tipe Artwork *</label>
-                        <select name="type" id="type" required>
+                        <select name="type" id="type" required onchange="updateTypeTag(this.value)">
                             <option value="">Pilih tipe...</option>
                             @foreach($types as $type)
                                 <option value="{{ $type }}" {{ old('type') === $type ? 'selected' : '' }}>
@@ -67,7 +67,7 @@
 
                     <div class="form-group">
                         <label for="form">Form Artwork *</label>
-                        <select name="form" id="form" required>
+                        <select name="form" id="form" required onchange="updateFormTag(this.value)">
                             <option value="">Pilih form...</option>
                             @foreach($forms as $form)
                                 <option value="{{ $form }}" {{ old('form') === $form ? 'selected' : '' }}>
@@ -78,6 +78,23 @@
                         @error('form')
                             <span class="error-message">{{ $message }}</span>
                         @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="art_for">Art For (Untuk siapa) *</label>
+                        <input type="text" name="art_for" id="art_for" value="{{ old('art_for', 'myself') }}" placeholder="Nama client atau 'myself'" required>
+                        <small class="muted-text">Nama client/untuk siapa karya ini. Kosong = "myself"</small>
+                        @error('art_for')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Preview Tag</label>
+                    <div class="tag-preview">
+                        <span id="type-tag" class="type-tag"></span>
+                        <span id="form-tag" class="type-tag"></span>
                     </div>
                 </div>
             </div>
@@ -134,5 +151,35 @@
                 reader.readAsDataURL(file);
             }
         }
+
+        function updateTypeTag(value) {
+            const tag = document.getElementById('type-tag');
+            if (value) {
+                tag.textContent = value.charAt(0).toUpperCase() + value.slice(1);
+                tag.className = 'type-tag tag-' + value;
+            } else {
+                tag.textContent = '';
+                tag.className = 'type-tag';
+            }
+        }
+
+        function updateFormTag(value) {
+            const tag = document.getElementById('form-tag');
+            if (value) {
+                tag.textContent = value.charAt(0).toUpperCase() + value.slice(1);
+                tag.className = 'type-tag tag-' + value;
+            } else {
+                tag.textContent = '';
+                tag.className = 'type-tag';
+            }
+        }
+
+        // Initialize tag on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const typeSelect = document.getElementById('type');
+            const formSelect = document.getElementById('form');
+            if (typeSelect.value) updateTypeTag(typeSelect.value);
+            if (formSelect.value) updateFormTag(formSelect.value);
+        });
     </script>
 @endsection

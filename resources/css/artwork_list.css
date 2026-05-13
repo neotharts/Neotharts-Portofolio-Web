@@ -1,0 +1,382 @@
+nav{
+    background-color: white;
+}
+
+.gallery-header{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 100px;
+}
+
+/* Gallery Section */
+#gallery {
+    min-height: 100vh;
+    padding-top: 40px;
+    padding-bottom: 50px;
+    background-color: white;
+}
+
+.gallery-container {
+    display: flex;
+    padding: 0 60px;
+    max-width: 1800px;
+    margin: 0 auto;
+    flex-direction: column;
+}
+
+/* Sidebar Filter */
+.sidebar-filter {
+    width: 100%;
+    position: sticky;
+    top: 80px;
+    height: fit-content;
+    padding-block: 20px;
+    z-index: 1000 ;
+    background-color: white;
+}
+
+.filter-title {
+    display: none;
+}
+
+.filter-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+}
+
+.filter-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px;
+    background-color: white;
+    border: var(--black) 2px solid;
+    border-radius: 50px;
+    color: var(--black);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.filter-item:hover {
+    background-color: #efe6db;
+}
+
+.filter-item.active {
+    background-color: var(--black);
+    color: white;
+}
+
+.filter-count {
+    font-size: 14px;
+    opacity: 0.7;
+    margin-left: 8px;
+}
+
+/* Gallery Content */
+.gallery-content {
+    flex: 1;
+}
+
+.gallery-content .placeholders {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.gallery-content .placeholder {
+    width: 300px;
+    height: 375px;
+    background-color: #f7f1ea;
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;;
+}
+
+.gallery-content .placeholder:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-content .placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery-content .placeholder-empty {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    color: var(--black);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    color: var(--black);
+    opacity: 0.5;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #5a3f482f;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    display: flex;
+    background-color: white;
+    border-radius: 28px;
+    max-width: 90vw;
+    max-height: 85vh;
+    overflow: hidden;
+}
+
+.modal-image {
+    width: 55vw;
+    height: 80vh;
+}
+
+.modal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.modal-info {
+    width: 350px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: white;
+}
+
+.modal-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 15px;
+}
+
+.modal-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.modal-type,
+.modal-form {
+    display: inline-block;
+    width: fit-content;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Type colors */
+.modal-type.tag-komisi,
+.modal-type.tag-commission {
+    background-color: rgba(255, 149, 67, 0.15);
+    color: #c6631f;
+}
+
+.modal-type.tag-personal {
+    background-color: rgba(255, 204, 153, 0.25);
+    color: #a66e33;
+}
+
+.modal-type.tag-organisasi {
+    background-color: rgba(255, 224, 188, 0.30);
+    color: #8a5a39;
+}
+
+.modal-type.tag-fanart {
+    background-color: rgba(255, 235, 210, 0.35);
+    color: #7d5c44;
+}
+
+/* Form colors */
+.modal-form.tag-chibi {
+    background-color: rgba(90, 63, 72, 0.12);
+    color: #5a3f48;
+}
+
+.modal-form.tag-headshot {
+    background-color: rgba(90, 63, 72, 0.18);
+    color: #4a3540;
+}
+
+.modal-form.tag-halfbody {
+    background-color: rgba(90, 63, 72, 0.22);
+    color: #3a2530;
+}
+
+.modal-form.tag-fullbody {
+    background-color: rgba(90, 63, 72, 0.28);
+    color: #2a1520;
+}
+
+.modal-description {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+.modal-meta {
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.modal-meta-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.modal-meta-item span:first-child {
+    color: #888;
+}
+
+.modal-meta-item span:last-child {
+    color: var(--black);
+    font-weight: 500;
+}
+
+.modal-close-btn {
+    margin-top: 30px;
+    padding: 15px 30px;
+    background-color: var(--black);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-close-btn:hover {
+    background-color: var(--orange);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .gallery-content .placeholder {
+        width: 250px;
+        height: 312px;
+    }
+    .mainheaders img{
+        width: 80vw;
+    }
+}
+
+@media (max-width: 768px) {
+    .gallery-container {
+        flex-direction: column;
+        padding: 0 30px;
+    }
+
+    .sidebar-filter {
+        width: 100%;
+        position: static;
+    }
+
+    .filter-list {
+        gap: 10px;
+    }
+
+    .filter-item {
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+
+    .gallery-content .placeholder {
+        width: 200px;
+        height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-container {
+        padding: 0 20px;
+        gap: 20px;
+    }
+
+    .filter-item {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+
+    .filter-count {
+        display: none;
+    }
+
+    .gallery-content .placeholder {
+        width: 160px;
+        height: 200px;
+    }
+
+    .modal-content {
+        flex-direction: column;
+        max-height: 90vh;
+    }
+
+    .modal-image {
+        width: 100%;
+        height: 40vh;
+    }
+
+    .modal-info {
+        width: 100%;
+        padding: 30px;
+    }
+}
+
+@media (max-width: 320px) {
+    .filter-list {
+        gap: 8px;
+    }
+
+    .filter-item {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .gallery-content .placeholder {
+        width: 140px;
+        height: 175px;
+    }
+}
