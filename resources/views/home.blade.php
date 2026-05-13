@@ -95,7 +95,7 @@
         <div class="placeholders">
             @if($artworks->count() > 0)
                 @foreach($artworks as $artwork)
-                    <div class="placeholder">
+                    <div class="placeholder" onclick="openModal({{ $artwork->id }})">
                         @if($artwork->image)
                             <img src="{{ asset('storage/' . $artwork->image) }}" alt="{{ $artwork->title }}">
                         @else
@@ -124,7 +124,80 @@
         </div>
     </section>
 
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-image">
+                <img id="modalImage" src="" alt="">
+            </div>
+            <div class="modal-info">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <div class="modal-tags">
+                    <span class="modal-type" id="modalType"></span>
+                    <span class="modal-form" id="modalForm"></span>
+                </div>
+                <p class="modal-description" id="modalDescription"></p>
+                <div class="modal-meta">
+                    <div class="modal-meta-item">
+                        <span>Art For:</span>
+                        <span id="modalArtist"></span>
+                    </div>
+                    <div class="modal-meta-item">
+                        <span>Date:</span>
+                        <span id="modalDate"></span>
+                    </div>
+                </div>
+                <button class="modal-close-btn" onclick="closeModalDirect()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Store all artworks data
+        const allArtworks = {!! json_encode($artworks) !!};
+
+        function openModal(id) {
+            const artwork = allArtworks.find(a => a.id === id);
+            if (!artwork) return;
+
+            document.getElementById('modalImage').src = '/storage/' + artwork.image;
+            document.getElementById('modalTitle').textContent = artwork.title;
+            document.getElementById('modalType').textContent = artwork.type.charAt(0).toUpperCase() + artwork.type.slice(1);
+            document.getElementById('modalType').className = 'modal-type tag-' + artwork.type;
+            document.getElementById('modalForm').textContent = artwork.form.charAt(0).toUpperCase() + artwork.form.slice(1);
+            document.getElementById('modalForm').className = 'modal-form tag-' + artwork.form;
+            document.getElementById('modalDescription').textContent = artwork.description || 'No description available.';
+            document.getElementById('modalArtist').textContent = artwork.art_for || 'myself';
+            document.getElementById('modalDate').textContent = new Date(artwork.published_at || artwork.created_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(event) {
+            if (event.target === event.currentTarget) {
+                closeModalDirect();
+            }
+        }
+
+        function closeModalDirect() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModalDirect();
+            }
+        });
+
         // Hide loading screen when page is fully loaded
         window.addEventListener('load', function() {
             const loadingScreen = document.getElementById('loadingScreen');

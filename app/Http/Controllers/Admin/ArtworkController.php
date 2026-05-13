@@ -5,18 +5,22 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\AdminMiddleware;
 use App\Models\Artwork;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ArtworkController extends Controller
 {
+    protected $imageService;
+
     /**
      * Hanya admin yang bisa akses
      */
-    public function __construct()
+    public function __construct(ImageService $imageService)
     {
         $this->middleware(AdminMiddleware::class);
+        $this->imageService = $imageService;
     }
 
     /**
@@ -80,7 +84,7 @@ class ArtworkController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // Max 5MB
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp', // Tanpa batas ukuran
             'type' => 'required|in:komisi,personal,organisasi,fanart',
             'form' => 'required|in:chibi,headshot,halfbody,fullbody',
             'art_for' => 'nullable|string|max:255',
@@ -93,12 +97,28 @@ class ArtworkController extends Controller
         }
 
         try {
-            // Upload image
+            // Compress and upload image
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
-                $filename = Str::slug($request->title) . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('artworks', $filename, 'public');
-                $validated['image'] = $path;
+
+                // Compress image using ImageService
+                $result = $this->imageService->compress($file, [
+                    'max_width' => 1920,
+                    'max_height' => 1920,
+                    'quality' => 85,
+                    'format' => 'webp',
+                    'suffix' => '',
+                ]);
+
+                $validated['image'] = $result['path'];
+
+                // Log compression info (optional, untuk debugging)
+                \Log::info('Image compressed', [
+                    'original_size' => $result['original_size'],
+                    'compressed_size' => $result['compressed_size'],
+                    'saved' => $result['saved_percentage'] . '%',
+                    'dimensions' => $result['dimensions'],
+                ]);
             }
 
             // Set user_id dan published_at
@@ -161,7 +181,7 @@ class ArtworkController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp', // Tanpa batas ukuran
             'type' => 'required|in:komisi,personal,organisasi,fanart',
             'form' => 'required|in:chibi,headshot,halfbody,fullbody',
             'art_for' => 'nullable|string|max:255',
@@ -182,9 +202,17 @@ class ArtworkController extends Controller
                 }
 
                 $file = $request->file('image');
-                $filename = Str::slug($request->title) . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('artworks', $filename, 'public');
-                $validated['image'] = $path;
+
+                // Compress image using ImageService
+                $result = $this->imageService->compress($file, [
+                    'max_width' => 1920,
+                    'max_height' => 1920,
+                    'quality' => 85,
+                    'format' => 'webp',
+                    'suffix' => '',
+                ]);
+
+                $validated['image'] = $result['path'];
             }
 
             // Update published_at jika status berubah

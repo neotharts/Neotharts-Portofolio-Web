@@ -112,13 +112,13 @@
 
                 <div class="form-group">
                     <label for="image">Update Gambar (Opsional)</label>
-                    <div class="file-upload">
+                    <div class="file-upload" id="fileUploadContainer">
                         <input type="file" name="image" id="image" accept="image/*" onchange="previewImage(event)">
-                        <div class="file-upload-area">
+                        <label for="image" class="file-upload-area">
                             <span class="material-icons-outlined">cloud_upload</span>
                             <p>Klik untuk upload atau drag & drop</p>
-                            <small>Format: JPEG, PNG, GIF | Maksimal: 5MB</small>
-                        </div>
+                            <small>Format: JPEG, PNG, GIF, WebP | Akan otomatis di-compress</small>
+                        </label>
                         <img id="image-preview" src="" alt="Preview" class="image-preview" style="display: none;">
                     </div>
                     @error('image')
@@ -154,6 +154,37 @@
     </div>
 
     <script>
+        const fileInput = document.getElementById('image');
+        const uploadArea = document.querySelector('.file-upload-area');
+
+        // Click to upload
+        uploadArea.addEventListener('click', function(e) {
+            e.preventDefault();
+            fileInput.click();
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                fileInput.dispatchEvent(new Event('change'));
+            }
+        });
+
         function previewImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -162,6 +193,7 @@
                     const preview = document.getElementById('image-preview');
                     preview.src = e.target.result;
                     preview.style.display = 'block';
+                    uploadArea.style.display = 'none';
                 };
                 reader.readAsDataURL(file);
             }

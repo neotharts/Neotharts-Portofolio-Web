@@ -835,6 +835,19 @@ input[type="file"] {
     padding: 1.5rem;
     color: var(--muted);
     background: rgba(255, 255, 255, 0.86);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-upload-area:hover {
+    border-color: var(--accent-strong);
+    background: rgba(255, 149, 67, 0.08);
+}
+
+.file-upload-area.dragover {
+    border-color: var(--accent-strong);
+    background: rgba(255, 149, 67, 0.15);
+    transform: scale(1.02);
 }
 
 .file-upload-area span {
