@@ -14,7 +14,7 @@
         <div class="mainav">
             <a href="{{ route('home') }}">Home</a>
             <a href="{{ route('artworks') }}">Artworks</a>
-            <a href="">Commissions</a>
+            <a href="{{ route('commission') }}">Commissions</a>
             <a href="">Contact</a>
         </div>
         <div class="mainavmobile">
@@ -81,7 +81,7 @@
                 <h2 class="modal-title" id="modalTitle"></h2>
                 <div class="modal-tags">
                     <span class="modal-type" id="modalType"></span>
-                    <span class="modal-form" id="modalForm"></span>
+                    <span class="modal-services" id="modalServices"></span>
                 </div>
                 <p class="modal-description" id="modalDescription"></p>
                 <div class="modal-meta">
@@ -93,6 +93,10 @@
                         <span>Date:</span>
                         <span id="modalDate"></span>
                     </div>
+                    <div class="modal-meta-item">
+                        <span>Services:</span>
+                        <span id="modalServicesList"></span>
+                    </div>
                 </div>
                 <button class="modal-close-btn" onclick="closeModalDirect()">
                     Close
@@ -103,8 +107,14 @@
 
     <script>
         // Store all artworks data
-        const allArtworks = {!! json_encode($artworks) !!};
-        let currentFilter = '';
+        const allArtworks = {!! json_encode($artworksArray ?? $artworks->toArray()) !!};
+
+        // Get initial filter from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentTypeFilter = urlParams.get('type') || '';
+        let currentServiceFilter = urlParams.get('service') || '';
+
+        console.log('All artworks loaded:', allArtworks.length, allArtworks);
 
         // Generate skeleton items to fill screen
         function generateSkeleton(count) {
@@ -123,7 +133,7 @@
             if (width <= 480) cols = 2;
             else if (width <= 768) cols = 3;
             else if (width <= 1024) cols = 4;
-            return cols * 2; // Show 2 rows worth
+            return cols * 2;
         }
 
         // Initialize skeleton
@@ -142,31 +152,6 @@
             });
         }
 
-        // Check if all images are loaded
-        function checkAllImagesLoaded() {
-            const images = document.querySelectorAll('.gallery-content .placeholder img');
-            if (images.length === 0) return true;
-
-            let loadedCount = 0;
-            images.forEach(img => {
-                if (img.complete && img.naturalHeight !== 0) {
-                    loadedCount++;
-                } else {
-                    img.addEventListener('load', onImageLoad);
-                    img.addEventListener('error', onImageLoad);
-                }
-            });
-
-            return loadedCount === images.length;
-        }
-
-        function onImageLoad() {
-            loadedCount++;
-            if (loadedCount >= totalImages) {
-                hideSkeleton();
-            }
-        }
-
         // Hide skeleton and show gallery
         function hideSkeleton() {
             const skeleton = document.getElementById('skeletonWrapper');
@@ -177,22 +162,54 @@
         }
 
         function openModal(id) {
-            const artwork = allArtworks.find(a => a.id === id);
-            if (!artwork) return;
+            const artwork = allArtworks.find(a => a.id == id);
+            if (!artwork) {
+                console.log('Artwork not found, id:', id, 'allArtworks:', allArtworks);
+                return;
+            }
 
             document.getElementById('modalImage').src = '/storage/' + artwork.image;
-            document.getElementById('modalTitle').textContent = artwork.title;
-            document.getElementById('modalType').textContent = artwork.type.charAt(0).toUpperCase() + artwork.type.slice(1);
-            document.getElementById('modalType').className = 'modal-type tag-' + artwork.type;
-            document.getElementById('modalForm').textContent = artwork.form.charAt(0).toUpperCase() + artwork.form.slice(1);
-            document.getElementById('modalForm').className = 'modal-form tag-' + artwork.form;
+            document.getElementById('modalTitle').textContent = artwork.title || 'No Title';
+
+            // Type badge
+            document.getElementById('modalType').textContent = (artwork.type || '').charAt(0).toUpperCase() + (artwork.type || '').slice(1);
+            document.getElementById('modalType').className = 'modal-type tag-' + (artwork.type || '');
+
+            // Services badges
+            const servicesContainer = document.getElementById('modalServices');
+            if (artwork.list_service && artwork.list_service.length > 0) {
+                const servicesHtml = artwork.list_service.map(service => {
+                    const formattedService = service.charAt(0).toUpperCase() + service.slice(1);
+                    return '<span class="modal-service-badge tag-' + service + '">' + formattedService + '</span>';
+                }).join('');
+                servicesContainer.innerHTML = servicesHtml;
+                servicesContainer.style.display = 'flex';
+            } else {
+                servicesContainer.innerHTML = '';
+                servicesContainer.style.display = 'none';
+            }
+
             document.getElementById('modalDescription').textContent = artwork.description || 'No description available.';
             document.getElementById('modalArtist').textContent = artwork.art_for || 'myself';
-            document.getElementById('modalDate').textContent = new Date(artwork.published_at || artwork.created_at).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
+
+            // Services list in meta
+            const servicesListEl = document.getElementById('modalServicesList');
+            if (artwork.list_service && artwork.list_service.length > 0) {
+                servicesListEl.textContent = artwork.list_service.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(', ');
+            } else {
+                servicesListEl.textContent = '-';
+            }
+
+            const dateStr = artwork.published_at || artwork.created_at;
+            if (dateStr) {
+                document.getElementById('modalDate').textContent = new Date(dateStr).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } else {
+                document.getElementById('modalDate').textContent = 'Unknown';
+            }
 
             document.getElementById('modalOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -235,12 +252,37 @@
                 </div>
             `).join('');
 
-            // Re-init lazy loading for new images
             initLazyLoading();
         }
 
-        // Filter click handler
-        document.querySelectorAll('.filter-item').forEach(item => {
+        // Apply filters
+        function applyFilters() {
+            let filtered = allArtworks;
+
+            // Filter by type
+            if (currentTypeFilter) {
+                filtered = filtered.filter(a => a.type === currentTypeFilter);
+            }
+
+            // Filter by service
+            if (currentServiceFilter) {
+                filtered = filtered.filter(a => {
+                    if (!a.list_service || !Array.isArray(a.list_service)) return false;
+                    return a.list_service.includes(currentServiceFilter);
+                });
+            }
+
+            renderGallery(filtered);
+        }
+
+        // Initialize active states from URL
+        function initFilterStates() {
+            // No active state on load - filter starts empty (shows all)
+            // Active state will be set when user clicks a filter
+        }
+
+        // Type filter click handler
+        document.querySelectorAll('.filter-item[data-filter]').forEach(item => {
             item.addEventListener('click', function(e) {
                 e.preventDefault();
 
@@ -248,33 +290,51 @@
 
                 // Toggle: if already selected, deselect (show all)
                 if (this.classList.contains('active')) {
-                    currentFilter = '';
-                    document.querySelectorAll('.filter-item').forEach(f => f.classList.remove('active'));
-                    renderGallery(allArtworks);
+                    currentTypeFilter = '';
+                    this.classList.remove('active');
                 } else {
-                    // Apply filter
-                    currentFilter = filter;
-                    document.querySelectorAll('.filter-item').forEach(f => f.classList.remove('active'));
+                    document.querySelectorAll('.filter-item[data-filter]').forEach(f => f.classList.remove('active'));
                     this.classList.add('active');
-
-                    const filtered = allArtworks.filter(a => a.type === filter);
-                    renderGallery(filtered);
+                    currentTypeFilter = filter;
                 }
+
+                applyFilters();
+            });
+        });
+
+        // Service filter click handler
+        document.querySelectorAll('.filter-service').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const service = this.dataset.service;
+
+                // Toggle: if already selected, deselect (show all)
+                if (this.classList.contains('active')) {
+                    currentServiceFilter = '';
+                    this.classList.remove('active');
+                } else {
+                    document.querySelectorAll('.filter-service').forEach(f => f.classList.remove('active'));
+                    this.classList.add('active');
+                    currentServiceFilter = service;
+                }
+
+                applyFilters();
             });
         });
 
         // Initialize gallery
-        renderGallery(allArtworks);
+        initFilterStates();
+        applyFilters();
         initLazyLoading();
 
         // Count images and wait for all to load
-        totalImages = document.querySelectorAll('.gallery-content .placeholder img').length;
-        loadedCount = 0;
+        let totalImages = document.querySelectorAll('.gallery-content .placeholder img').length;
+        let loadedCount = 0;
 
         if (totalImages === 0) {
             hideSkeleton();
         } else {
-            // Track loading for each image
             document.querySelectorAll('.gallery-content .placeholder img').forEach(img => {
                 if (img.complete && img.naturalHeight !== 0) {
                     loadedCount++;
@@ -294,12 +354,59 @@
                 }
             });
 
-            // Fallback: hide skeleton after 5 seconds max
             setTimeout(() => {
                 hideSkeleton();
             }, 5000);
         }
     </script>
+
+    <style>
+        /* Service badge styles */
+        .modal-service-badge {
+            display: inline-flex;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            align-items: center;
+            margin-right: 6px;
+            color: white;
+        }
+
+        .modal-services {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag-headshot { background: #e8a87c; }
+        .tag-halfbody { background: #c38c9c; }
+        .tag-fullbody { background: #85c1ae; }
+        .tag-chibi { background: #9bc1e8; }
+
+        .filter-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 16px 0;
+        }
+
+        .filter-services {
+            opacity: 0.8;
+        }
+
+        .filter-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 8px;
+            padding-left: 12px;
+        }
+
+        .filter-service.active {
+            background: rgba(232, 168, 124, 0.2);
+        }
+    </style>
 
     </body>
 </html>

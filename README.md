@@ -1,6 +1,13 @@
 # Neotharts Portfolio
 
-Portfolio website untuk Neotharts built with Laravel 13.
+## Identitas Mahasiswa
+- **Nama:** Muhammad Naufal
+- **NRP:** 5124500010
+- **Kelas:** MMB A
+
+## Deskripsi
+
+Portfolio website untuk Neotharts, platform portfolio digital untuk artist dengan fitur manajemen artwork, visitor tracking, dan admin panel. Built with Laravel 13.
 
 ## 🚀 Quick Start
 
@@ -14,7 +21,7 @@ Portfolio website untuk Neotharts built with Laravel 13.
 
 1. **Clone repository**
    ```bash
-   git clone https://github.com/yourusername/neotharts-portofolio.git
+   git clone https://github.com/neotharts/Neotharts-Portofolio-Web
    cd neotharts-portofolio
    ```
 
@@ -172,8 +179,8 @@ This project is private and proprietary.
 
 1. Fork the repository
 2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'add feature'`)
+4. Push to branch (`git push origin`)
 5. Open Pull Request
 
 ---

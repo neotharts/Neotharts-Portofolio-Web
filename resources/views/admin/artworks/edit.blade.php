@@ -32,7 +32,7 @@
 
                 <div class="form-group">
                     <label for="title">Judul Artwork *</label>
-                    <input type="text" name="title" id="title" value="{{ old('title', $artwork->title) }}" placeholder="Masukkan judul artwork" required>
+                    <input type="text" name="title" id="title" value="{{ old('title', $artwork->title) }}" placeholder="Masukkan judul artwork" autocomplete="off" required>
                     @error('title')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -40,7 +40,7 @@
 
                 <div class="form-group">
                     <label for="description">Deskripsi *</label>
-                    <textarea name="description" id="description" placeholder="Jelaskan tentang artwork Anda..." rows="6" required>{{ old('description', $artwork->description) }}</textarea>
+                    <textarea name="description" id="description" placeholder="Jelaskan tentang artwork Anda..." rows="6" autocomplete="off" required>{{ old('description', $artwork->description) }}</textarea>
                     @error('description')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -53,7 +53,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="type">Tipe Artwork *</label>
-                        <select name="type" id="type" required onchange="updateTypeTag(this.value)">
+                        <select name="type" id="type" required onchange="updateTypeDropdown()">
                             <option value="">Pilih tipe...</option>
                             @foreach($types as $type)
                                 <option value="{{ $type }}" {{ old('type', $artwork->type) === $type ? 'selected' : '' }}>
@@ -62,21 +62,6 @@
                             @endforeach
                         </select>
                         @error('type')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="form">Form Artwork *</label>
-                        <select name="form" id="form" required onchange="updateFormTag(this.value)">
-                            <option value="">Pilih form...</option>
-                            @foreach($forms as $form)
-                                <option value="{{ $form }}" {{ old('form', $artwork->form) === $form ? 'selected' : '' }}>
-                                    {{ ucfirst($form) }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('form')
                             <span class="error-message">{{ $message }}</span>
                         @enderror
                     </div>
@@ -92,10 +77,27 @@
                 </div>
 
                 <div class="form-group">
+                    <label>List Service</label>
+                    <p class="form-label">Pilih satu atau lebih service yang tersedia untuk artwork ini:</p>
+                    <div class="service-checkbox-group">
+                        @foreach($availableServices as $service)
+                            <label class="service-checkbox-item">
+                                <input type="checkbox" name="list_service[]" value="{{ $service }}"
+                                    {{ is_array(old('list_service', $artwork->list_service ?? [])) && in_array($service, old('list_service', $artwork->list_service ?? [])) ? 'checked' : '' }}>
+                                <span class="service-checkbox-label tag-{{ $service }}">{{ ucfirst(str_replace('-', ' ', $service)) }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    @error('list_service')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
                     <label>Preview Tag</label>
                     <div class="tag-preview">
                         <span id="type-tag" class="type-tag tag-{{ $artwork->type ?? '' }}">{{ isset($artwork->type) ? ucfirst($artwork->type) : '' }}</span>
-                        <span id="form-tag" class="type-tag tag-{{ $artwork->form ?? '' }}">{{ isset($artwork->form) ? ucfirst($artwork->form) : '' }}</span>
+                        <span id="service-preview" class="type-tag"></span>
                     </div>
                 </div>
             </div>
@@ -153,6 +155,59 @@
         </form>
     </div>
 
+    <style>
+        .service-checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .service-checkbox-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .service-checkbox-item input[type="checkbox"] {
+            display: none;
+        }
+
+        .service-checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            background: var(--bg-tertiary, #f0f0f0);
+            color: var(--text-muted, #666);
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .service-checkbox-item input[type="checkbox"]:checked + .service-checkbox-label {
+            background: var(--accent-color, #e8a87c);
+            color: white;
+            border-color: var(--accent-color, #e8a87c);
+        }
+
+        .service-checkbox-item:hover .service-checkbox-label {
+            border-color: var(--accent-color, #e8a87c);
+        }
+
+        /* Tag colors for each service */
+        .tag-headshot { --tag-color: #e8a87c; }
+        .tag-halfbody { --tag-color: #c38c9c; }
+        .tag-fullbody { --tag-color: #85c1ae; }
+        .tag-chibi { --tag-color: #9bc1e8; }
+
+        .service-checkbox-item input[type="checkbox"]:checked + .tag-headshot { background: #e8a87c; border-color: #e8a87c; }
+        .service-checkbox-item input[type="checkbox"]:checked + .tag-halfbody { background: #c38c9c; border-color: #c38c9c; }
+        .service-checkbox-item input[type="checkbox"]:checked + .tag-fullbody { background: #85c1ae; border-color: #85c1ae; }
+        .service-checkbox-item input[type="checkbox"]:checked + .tag-chibi { background: #9bc1e8; border-color: #9bc1e8; }
+    </style>
+
     <script>
         const fileInput = document.getElementById('image');
         const uploadArea = document.querySelector('.file-upload-area');
@@ -199,26 +254,57 @@
             }
         }
 
-        function updateTypeTag(value) {
-            const tag = document.getElementById('type-tag');
-            if (value) {
-                tag.textContent = value.charAt(0).toUpperCase() + value.slice(1);
-                tag.className = 'type-tag tag-' + value;
+        // Services data from controller (grouped by type)
+        const servicesByType = @json($servicesByType ?? collect([]));
+
+        // Available services
+        const availableServices = @json($availableServices ?? []);
+
+        function updateTypeDropdown() {
+            const typeSelect = document.getElementById('type');
+            const selectedType = typeSelect.value;
+
+            // Update type tag
+            const typeTag = document.getElementById('type-tag');
+            if (selectedType) {
+                typeTag.textContent = selectedType.charAt(0).toUpperCase() + selectedType.slice(1);
+                typeTag.className = 'type-tag tag-' + selectedType;
             } else {
-                tag.textContent = '';
-                tag.className = 'type-tag';
+                typeTag.textContent = '';
+                typeTag.className = 'type-tag';
             }
         }
 
-        function updateFormTag(value) {
-            const tag = document.getElementById('form-tag');
-            if (value) {
-                tag.textContent = value.charAt(0).toUpperCase() + value.slice(1);
-                tag.className = 'type-tag tag-' + value;
+        // Update service preview when checkboxes change
+        function updateServicePreview() {
+            const checkboxes = document.querySelectorAll('input[name="list_service[]"]:checked');
+            const previewSpan = document.getElementById('service-preview');
+
+            if (checkboxes.length > 0) {
+                const selectedServices = Array.from(checkboxes).map(cb => {
+                    const value = cb.value;
+                    return value.charAt(0).toUpperCase() + value.slice(1);
+                });
+                previewSpan.textContent = selectedServices.join(', ');
+                previewSpan.style.display = 'inline-flex';
             } else {
-                tag.textContent = '';
-                tag.className = 'type-tag';
+                previewSpan.textContent = '';
+                previewSpan.style.display = 'none';
             }
         }
+
+        // Listen for checkbox changes
+        document.querySelectorAll('input[name="list_service[]"]').forEach(checkbox => {
+            checkbox.addEventListener('change', updateServicePreview);
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const typeSelect = document.getElementById('type');
+            if (typeSelect.value) {
+                updateTypeDropdown();
+            }
+            updateServicePreview();
+        });
     </script>
 @endsection

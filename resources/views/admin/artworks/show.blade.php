@@ -39,9 +39,19 @@
                     <h3>Kategori</h3>
                     <div class="info-badges">
                         <span class="badge tag-{{ $artwork->type }}">Tipe: {{ ucfirst($artwork->type) }}</span>
-                        <span class="badge tag-{{ $artwork->form }}">Form: {{ ucfirst($artwork->form) }}</span>
                     </div>
                 </div>
+
+                @if($artwork->list_service && count($artwork->list_service) > 0)
+                <div class="info-group">
+                    <h3>List Service</h3>
+                    <div class="service-badges">
+                        @foreach($artwork->list_service as $service)
+                            <span class="service-badge tag-{{ $service }}">{{ ucfirst(str_replace('-', ' ', $service)) }}</span>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
 
                 <div class="info-group">
                     <h3>Status</h3>
@@ -70,4 +80,25 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .service-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .service-badge {
+            display: inline-flex;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .tag-headshot { background: #e8a87c; color: white; }
+        .tag-halfbody { background: #c38c9c; color: white; }
+        .tag-fullbody { background: #85c1ae; color: white; }
+        .tag-chibi { background: #9bc1e8; color: white; }
+    </style>
 @endsection

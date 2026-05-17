@@ -213,14 +213,13 @@ nav{
     display: flex;
     background-color: white;
     border-radius: 28px;
-    max-width: 90vw;
-    max-height: 85vh;
+    max-width: 70%;
+    max-height: 70%;
     overflow: hidden;
 }
 
 .modal-image {
-    width: 55vw;
-    height: 80vh;
+    width: 55%;
 }
 
 .modal-image img {
@@ -230,7 +229,7 @@ nav{
 }
 
 .modal-info {
-    width: 350px;
+    width: 45%;
     padding: 40px;
     display: flex;
     flex-direction: column;

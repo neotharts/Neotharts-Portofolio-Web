@@ -94,6 +94,7 @@
                             <tr>
                                 <th>Judul</th>
                                 <th>Tipe</th>
+                                <th>Services</th>
                                 <th>Status</th>
                                 <th>Tanggal Upload</th>
                                 <th>Aksi</th>
@@ -104,6 +105,17 @@
                                 <tr>
                                     <td>{{ $artwork->title }}</td>
                                     <td><span class="badge-type">{{ ucfirst($artwork->type) }}</span></td>
+                                    <td>
+                                        @if($artwork->list_service && count($artwork->list_service) > 0)
+                                            <div class="service-badges-mini">
+                                                @foreach($artwork->list_service as $service)
+                                                    <span class="service-badge-mini service-{{ $service }}">{{ ucfirst(str_replace('-', ' ', $service)) }}</span>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <span class="muted-text">-</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         @if($artwork->is_published)
                                             <span class="badge badge-success">Dipublikasikan</span>

@@ -14,7 +14,10 @@
 a{
     text-decoration: none;
 }
+.lo{
+    width: 100%;
 
+}
 body {
     font-family: 'Poppins', sans-serif;
 }
@@ -176,7 +179,7 @@ header > * {
 }
 .placeholder {
     aspect-ratio: 4 / 5;
-    height: 400px;
+    width: 400px;
     background-color: #f7f1ea;
     position: relative;
     overflow: hidden;
@@ -268,6 +271,10 @@ header > * {
     .mainheader img{
         width: 400px;
     }
+
+    .placeholder{
+        width: 30vw;
+    }
 }
 @media (max-width: 1024px) {
     .img img{
@@ -282,6 +289,7 @@ header > * {
     .mainheader img{
         width: 40vw;
     }
+
 }
 
 @media (max-width: 768px) {
@@ -297,6 +305,36 @@ header > * {
     }
     .mainheader img.mobile{
         display: block;
+        width: 80vw;
+    }
+
+    .placeholders {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-inline: 10vw;
+    border-radius: 1%;
+    gap: 42vw;
+}   
+    #latest{
+        padding-top: 100px;
+    }
+
+    .kotak{
+        width: 200vw;
+        height: 200px;
+        top: 25%;
+        background-color: var(--orange);
+        position: absolute;
+        z-index: -1;
+    }
+
+    .placeholders::-webkit-scrollbar {
+        display: none;
+    }
+
+    .placeholder {
+        flex: 0 0 auto;
         width: 80vw;
     }
 

@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(php -m)",
-      "Bash(composer show *)"
+      "Bash(composer show *)",
+      "Bash(del \"database\\\\migrations\\\\2026_05_15_000001_remove_form_from_services_table.php\")"
     ]
   }
 }

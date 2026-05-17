@@ -16,7 +16,7 @@
         <div class="filter-bar">
             <form method="GET" action="{{ route('admin.artworks.index') }}" class="filter-form">
                 <input type="text" name="search" placeholder="Cari artwork..." value="{{ request('search') }}" class="filter-input">
-                
+
                 <select name="type" class="filter-select">
                     <option value="">Semua Tipe</option>
                     @foreach($types as $type)
@@ -26,11 +26,11 @@
                     @endforeach
                 </select>
 
-                <select name="form" class="filter-select">
-                    <option value="">Semua Form</option>
-                    @foreach($forms as $form)
-                        <option value="{{ $form }}" {{ request('form') === $form ? 'selected' : '' }}>
-                            {{ ucfirst($form) }}
+                <select name="service" class="filter-select">
+                    <option value="">Semua Service</option>
+                    @foreach($availableServices as $service)
+                        <option value="{{ $service }}" {{ request('service') === $service ? 'selected' : '' }}>
+                            {{ ucfirst(str_replace('-', ' ', $service)) }}
                         </option>
                     @endforeach
                 </select>
@@ -42,7 +42,7 @@
                 </select>
 
                 <button type="submit" class="button button-primary">Filter</button>
-                @if(request()->anyFilled(['search', 'type', 'form', 'status']))
+                @if(request()->anyFilled(['search', 'type', 'service', 'status']))
                     <a href="{{ route('admin.artworks.index') }}" class="button button-outline">Reset</a>
                 @endif
             </form>
@@ -70,7 +70,7 @@
                             <th>Gambar</th>
                             <th>Judul</th>
                             <th>Tipe</th>
-                            <th>Form</th>
+                            <th>List Service</th>
                             <th>Status</th>
                             <th>Upload</th>
                             <th>Art For</th>
@@ -92,7 +92,15 @@
                                     <span class="badge tag-{{ $artwork->type }}">{{ ucfirst($artwork->type) }}</span>
                                 </td>
                                 <td>
-                                    <span class="badge tag-{{ $artwork->form }}">{{ ucfirst($artwork->form) }}</span>
+                                    @if($artwork->list_service && count($artwork->list_service) > 0)
+                                        <div class="service-badges">
+                                            @foreach($artwork->list_service as $service)
+                                                <span class="service-badge tag-{{ $service }}">{{ ucfirst(str_replace('-', ' ', $service)) }}</span>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <span class="muted-text">-</span>
+                                    @endif
                                 </td>
                                 <td>
                                     @if($artwork->is_published)
@@ -131,4 +139,26 @@
             </div>
         @endif
     </div>
+
+    <style>
+        .service-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .service-badge {
+            display: inline-flex;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .tag-headshot { background: #e8a87c; color: white; }
+        .tag-halfbody { background: #c38c9c; color: white; }
+        .tag-fullbody { background: #85c1ae; color: white; }
+        .tag-chibi { background: #9bc1e8; color: white; }
+    </style>
 @endsection

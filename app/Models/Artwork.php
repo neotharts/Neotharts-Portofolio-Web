@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['user_id', 'title', 'description', 'image', 'type', 'form', 'art_for', 'is_published', 'published_at'])]
+#[Fillable(['user_id', 'title', 'description', 'image', 'type', 'form', 'list_service', 'art_for', 'is_published', 'published_at'])]
 class Artwork extends Model
 {
     use HasFactory;
@@ -23,6 +23,7 @@ class Artwork extends Model
         'image',
         'type',
         'form',
+        'list_service',
         'art_for',
         'is_published',
         'published_at',
@@ -36,6 +37,7 @@ class Artwork extends Model
     protected $casts = [
         'is_published' => 'boolean',
         'published_at' => 'datetime',
+        'list_service' => 'array',
     ];
 
     /**
@@ -72,6 +74,22 @@ class Artwork extends Model
     public function scopeByForm($query, $form)
     {
         return $query->where('form', $form);
+    }
+
+    /**
+     * Filter berdasarkan list_service
+     */
+    public function scopeByService($query, $service)
+    {
+        return $query->whereJsonContains('list_service', $service);
+    }
+
+    /**
+     * Get list_service as array (with fallback)
+     */
+    public function getListServiceArrayAttribute()
+    {
+        return $this->list_service ?? [];
     }
 
     /**
