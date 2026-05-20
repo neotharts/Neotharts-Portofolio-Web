@@ -5,6 +5,76 @@
 - **NRP:** 5124500010
 - **Kelas:** MMB A
 
+---
+
+## 📊 Gantt Chart - Development Progress
+
+| Fitur | M1 | M2 | M3 | M4 |
+|-------|:--:|:--:|:--:|:--:|
+| **Setup Project** | ██ | | | |
+| **Admin Dashboard** | ██ | ██ | | |
+| **CRUD Artwork** | ██ | ██ | | |
+| **Visitor Tracking** | ██ | ██ | | |
+| **Dynamic Homepage** | ██ | ██ | | |
+| **Authentication** | ██ | ██ | | |
+| **Artwork List Page** | | ██ | ██ | |
+| **Image Compression** | | ██ | | |
+| **Services Management** | | | ██ | |
+| **Commission Page** | | | ██ | |
+| **Multiple Image Upload** | | | ██ | |
+| **Image Crop 4:5** | | | ██ | |
+| **Visitor Chart** | | | ██ | |
+| **Username Login** | | | | ██ |
+| **Profile Management** | | | | ██ |
+| **Password Security** | | | | ██ |
+| **Dashboard Layout** | | | | ██ |
+
+**Legend:**
+- M1 = Minggu 1 (30 Apr - 6 Mei)
+- M2 = Minggu 2 (7 - 13 Mei)
+- M3 = Minggu 3 (14 - 20 Mei)
+- M4 = Minggu 4 (21 - 27 Mei)
+- ██ = Active Development
+
+---
+
+### 📅 Detail Progress Mingguan
+
+#### 📆 Minggu 1 (30 April - 6 Mei 2026)
+- Inisialisasi project Laravel
+- Setup database dan migrations
+- Konfigurasi environment
+
+#### 📆 Minggu 2 (7 - 13 Mei 2026)
+- Admin dashboard dengan statistik
+- CRUD artwork dengan upload file
+- Dynamic homepage (3 artwork terbaru)
+- Visitor tracking system
+- Authentication & admin middleware
+- Responsive UI (glass morphism theme)
+- Fitur `art_for` untuk track client
+- Halaman artwork list
+- ImageService (kompresi gambar otomatis)
+- Perbaikan layout homepage
+
+#### 📆 Minggu 3 (14 - 20 Mei 2026)
+- Manajemen Services (CRUD commission types)
+- Halaman commission page
+- Multiple image upload (max 12)
+- Fitur crop 4:5 untuk thumbnail
+- Visitor chart 7 hari terakhir
+- Login dengan username (bukan email)
+- Menu profil admin (ubah nama, username, password)
+- Password di-hash dengan bcrypt
+- Hapus statistik "Total Artists" (single artist)
+- Perbaikan layout dashboard
+- Fix bug crop image untuk existing artwork
+
+#### 📆 Minggu 4 (21 - 27 Mei 2026)
+- *(Dalam pengembangan)*
+
+---
+
 ## Deskripsi
 
 Portfolio website untuk Neotharts, platform portfolio digital untuk artist dengan fitur manajemen artwork, visitor tracking, dan admin panel. Built with Laravel 13.
@@ -76,8 +146,8 @@ Portfolio website untuk Neotharts, platform portfolio digital untuk artist denga
 
 ## 🔐 Admin Access
 
-- **URL:** `/admin`
-- **Email:** `admin@neotharts.com`
+- **URL:** `/login`
+- **Username:** `admin`
 - **Password:** `password`
 
 ## 📁 Project Structure

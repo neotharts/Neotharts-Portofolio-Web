@@ -16,6 +16,7 @@ class Service extends Model
         'type',
         'image',
         'features',
+        'tos',
         'is_active',
         'sort_order',
     ];

@@ -74,8 +74,16 @@
     <!-- Modal -->
     <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-image">
+            <div class="modal-image modal-carousel">
+                <button type="button" class="modal-carousel-btn modal-carousel-prev" id="modalPrevBtn" onclick="changeModalImage(-1)" aria-label="Previous image">
+                    <span class="material-icons">chevron_left</span>
+                </button>
                 <img id="modalImage" src="" alt="">
+                <button type="button" class="modal-carousel-btn modal-carousel-next" id="modalNextBtn" onclick="changeModalImage(1)" aria-label="Next image">
+                    <span class="material-icons">chevron_right</span>
+                </button>
+                <div class="modal-carousel-counter" id="modalImageCounter"></div>
+                <div class="modal-carousel-thumbs" id="modalImageThumbs"></div>
             </div>
             <div class="modal-info">
                 <h2 class="modal-title" id="modalTitle"></h2>
@@ -113,6 +121,9 @@
         const urlParams = new URLSearchParams(window.location.search);
         let currentTypeFilter = urlParams.get('type') || '';
         let currentServiceFilter = urlParams.get('service') || '';
+        let currentModalImages = [];
+        let currentModalImageIndex = 0;
+        let modalSlideDirection = 'next';
 
         console.log('All artworks loaded:', allArtworks.length, allArtworks);
 
@@ -168,7 +179,7 @@
                 return;
             }
 
-            document.getElementById('modalImage').src = '/storage/' + artwork.image;
+            setupModalImages(artwork);
             document.getElementById('modalTitle').textContent = artwork.title || 'No Title';
 
             // Type badge
@@ -213,6 +224,68 @@
 
             document.getElementById('modalOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
+        }
+
+        function setupModalImages(artwork) {
+            currentModalImages = Array.isArray(artwork.images) && artwork.images.length > 0
+                ? artwork.images
+                : (artwork.image ? [artwork.image] : []);
+            currentModalImageIndex = 0;
+            modalSlideDirection = 'next';
+
+            const prevBtn = document.getElementById('modalPrevBtn');
+            const nextBtn = document.getElementById('modalNextBtn');
+            const counter = document.getElementById('modalImageCounter');
+            const thumbs = document.getElementById('modalImageThumbs');
+            const hasMultipleImages = currentModalImages.length > 1;
+
+            prevBtn.style.display = hasMultipleImages ? 'grid' : 'none';
+            nextBtn.style.display = hasMultipleImages ? 'grid' : 'none';
+            counter.style.display = currentModalImages.length > 0 ? 'block' : 'none';
+            thumbs.style.display = hasMultipleImages ? 'flex' : 'none';
+
+            thumbs.innerHTML = currentModalImages.map((image, index) => `
+                <button type="button" class="modal-carousel-thumb ${index === 0 ? 'active' : ''}" onclick="setModalImage(${index})" aria-label="Show image ${index + 1}">
+                    <img src="/storage/${image}" alt="${artwork.title || 'Artwork'} ${index + 1}">
+                </button>
+            `).join('');
+
+            renderModalImage();
+        }
+
+        function renderModalImage() {
+            const modalImage = document.getElementById('modalImage');
+            const counter = document.getElementById('modalImageCounter');
+            const thumbs = document.querySelectorAll('.modal-carousel-thumb');
+
+            if (currentModalImages.length === 0) {
+                modalImage.removeAttribute('src');
+                modalImage.alt = 'No image';
+                counter.textContent = '';
+                return;
+            }
+
+            modalImage.src = '/storage/' + currentModalImages[currentModalImageIndex];
+            modalImage.classList.remove('slide-next', 'slide-prev');
+            void modalImage.offsetWidth;
+            modalImage.classList.add(modalSlideDirection === 'prev' ? 'slide-prev' : 'slide-next');
+            counter.textContent = `${currentModalImageIndex + 1} / ${currentModalImages.length}`;
+
+            thumbs.forEach((thumb, index) => {
+                thumb.classList.toggle('active', index === currentModalImageIndex);
+            });
+        }
+
+        function setModalImage(index, direction = 'next') {
+            if (currentModalImages.length === 0) return;
+
+            modalSlideDirection = direction;
+            currentModalImageIndex = (index + currentModalImages.length) % currentModalImages.length;
+            renderModalImage();
+        }
+
+        function changeModalImage(direction) {
+            setModalImage(currentModalImageIndex + direction, direction < 0 ? 'prev' : 'next');
         }
 
         function closeModal(event) {

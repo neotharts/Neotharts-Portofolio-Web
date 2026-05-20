@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'is_admin'])]
+#[Fillable(['name', 'username', 'email', 'password', 'is_admin'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -37,5 +37,13 @@ class User extends Authenticatable
     public function artworks()
     {
         return $this->hasMany(Artwork::class);
+    }
+
+    /**
+     * Get the login column name (use username instead of email).
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'username';
     }
 }

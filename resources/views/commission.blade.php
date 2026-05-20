@@ -31,6 +31,15 @@
         </div>
     </section>
 
+    <section class="coms_menu">
+        <div class="coms_menu_container">
+            <div class="filter-list">
+                <a href="#commission-list" class="filter-item">Commission</a>
+                <a href="#tosModal" class="filter-item">TOS</a>
+            </div>
+        </div>
+    </section>
+
     @if($services->count() > 0)
     <section id="commission-list">
         <div class="commission-container">
@@ -86,6 +95,19 @@
                 <div class="service-gallery-grid" id="serviceGalleryGrid">
                     <!-- Artworks will be loaded here -->
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOS Modal -->
+    <div class="tos-modal-overlay" id="tosModal">
+        <div class="tos-modal-content">
+            <div class="tos-modal-header">
+                <h2>Terms of Service</h2>
+                <button class="tos-modal-close" onclick="closeTosModal()">×</button>
+            </div>
+            <div class="tos-modal-body">
+                {!! $tosContent ?? '<p>Terms of Service belum tersedia.</p>' !!}
             </div>
         </div>
     </div>
@@ -365,9 +387,199 @@
 
         // Run when DOM is ready
         document.addEventListener('DOMContentLoaded', initSmartCrop);
+
+        // TOS Modal Functions
+        function closeTosModal() {
+            document.getElementById('tosModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Open TOS modal when clicking TOS filter
+        document.querySelector('.filter-item[href="#tosModal"]')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('tosModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Close TOS modal when clicking overlay
+        document.getElementById('tosModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTosModal();
+            }
+        });
+
+        // Close TOS modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeTosModal();
+            }
+        });
     </script>
 
     <style>
+        /* Filter Menu Styles (like artwork filter) */
+        .coms_menu {
+            padding: 20px 0;
+            position: sticky;
+            top: 70px;
+            z-index: 100;
+        }
+
+        .coms_menu_container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .filter-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .filter-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 30px;
+            background-color: white;
+            border: var(--black, #1f1b18) 2px solid;
+            border-radius: 50px;
+            color: var(--black, #1f1b18);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .filter-item:hover {
+            background-color: #efe6db;
+        }
+
+        .filter-item.active {
+            background-color: var(--black, #1f1b18);
+            color: white;
+        }
+
+        /* TOS Modal Styles */
+        .tos-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .tos-modal-overlay.active {
+            display: flex;
+        }
+
+        .tos-modal-content {
+            background-color: white;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 30px 40px;
+        }
+
+        .tos-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            position: sticky;
+            top: 0;
+            background: white;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tos-modal-header h2 {
+            margin: 0;
+            color: var(--black, #1f1b18);
+            font-size: 24px;
+        }
+
+        .tos-modal-close {
+            background: none;
+            border: none;
+            font-size: 32px;
+            color: var(--black, #1f1b18);
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .tos-modal-close:hover {
+            color: #ff9543;
+        }
+
+        .tos-modal-body {
+            line-height: 1.8;
+            color: #5a3f48;
+        }
+
+        .tos-modal-body h3 {
+            color: var(--black, #1f1b18);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .tos-modal-body p, .tos-modal-body li {
+            margin-bottom: 12px;
+        }
+
+        .tos-modal-body ul {
+            padding-left: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .filter-item {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+
+            .tos-modal-content {
+                padding: 20px 24px;
+            }
+
+            .tos-modal-header h2 {
+                font-size: 20px;
+            }
+
+            .tos-modal-body {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .filter-item {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+
+            .tos-modal-content {
+                padding: 16px 20px;
+                border-radius: 16px;
+            }
+
+            .tos-modal-header h2 {
+                font-size: 18px;
+            }
+
+            .tos-modal-close {
+                font-size: 24px;
+            }
+        }
+
         /* Service badge styles for modal */
         .detailcoms{
             width: 50%;

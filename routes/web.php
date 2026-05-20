@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\ArtworkController;
 use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\TosController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\HomeController;
@@ -37,4 +39,13 @@ Route::prefix('admin')->name('admin.')->middleware([AdminMiddleware::class])->gr
 
     // Service Resource
     Route::resource('services', ServiceController::class);
+
+    // TOS (Terms of Service)
+    Route::get('/tos', [TosController::class, 'edit'])->name('tos.edit');
+    Route::put('/tos', [TosController::class, 'update'])->name('tos.update');
+
+    // Profile (Edit name & password)
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });

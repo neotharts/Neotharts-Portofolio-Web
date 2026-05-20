@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://images.unsplash.com https://storage.googleapis.com; connect-src 'self';">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Dashboard | Neotharts</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    @stack('styles')
     <style>
         /* Prevent autocomplete styling for security */
         input:-webkit-autofill,
@@ -57,6 +53,14 @@
                     <span class="material-icons-outlined">add_circle_outline</span>
                     <span>Tambah Service</span>
                 </a>
+                <a href="{{ route('admin.tos.edit') }}" class="nav-item {{ request()->routeIs('admin.tos.*') ? 'active' : '' }}">
+                    <span class="material-icons-outlined">description</span>
+                    <span>TOS</span>
+                </a>
+                <a href="{{ route('admin.profile.edit') }}" class="nav-item {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
+                    <span class="material-icons-outlined">manage_accounts</span>
+                    <span>Profil</span>
+                </a>
             </nav>
 
             <div class="sidebar-footer">
@@ -90,5 +94,6 @@
             </section>
         </main>
     </div>
+    @stack('scripts')
 </body>
 </html>

@@ -72,6 +72,7 @@
                             <th>Tipe</th>
                             <th>List Service</th>
                             <th>Status</th>
+                            <th>Urutan</th>
                             <th>Upload</th>
                             <th>Art For</th>
                             <th>Aksi</th>
@@ -109,6 +110,7 @@
                                         <span class="badge badge-warning">Draft</span>
                                     @endif
                                 </td>
+                                <td>{{ $artwork->sort_order }}</td>
                                 <td>{{ $artwork->created_at->format('d M Y') }}</td>
                                 <td>{{ $artwork->art_for ?? 'myself' }}</td>
                                 <td class="actions">

@@ -25,7 +25,7 @@ class ArtworkListController extends Controller
             $query->whereJsonContains('list_service', $request->service);
         }
 
-        $artworks = $query->orderByDesc('published_at')->get();
+        $artworks = $query->ordered()->get();
 
         // Get unique types from database for filter
         $dbTypes = Artwork::where('is_published', true)
@@ -58,10 +58,12 @@ class ArtworkListController extends Controller
                 'title' => $artwork->title,
                 'description' => $artwork->description,
                 'image' => $artwork->image,
+                'images' => $artwork->gallery_images,
                 'type' => $artwork->type,
                 'form' => $artwork->form,
                 'list_service' => $artwork->list_service ?? [],
                 'art_for' => $artwork->art_for,
+                'sort_order' => $artwork->sort_order,
                 'published_at' => $artwork->published_at?->toISOString(),
                 'created_at' => $artwork->created_at?->toISOString(),
             ];

@@ -22,10 +22,12 @@ class ArtworkFactory extends Factory
             'user_id' => User::factory(),
             'title' => fake()->sentence(3),
             'description' => fake()->paragraphs(3, true),
-            'image' => 'artworks/sample-' . fake()->slug() . '.jpg',
+            'image' => $image = 'artworks/sample-' . fake()->slug() . '.jpg',
+            'images' => [$image],
             'type' => fake()->randomElement(['komisi', 'personal', 'organisasi', 'fanart']),
             'form' => fake()->randomElement(['chibi', 'headshot', 'halfbody', 'fullbody']),
             'is_published' => fake()->boolean(70),
+            'sort_order' => 0,
             'published_at' => fake()->boolean(70) ? now()->subDays(fake()->numberBetween(1, 30)) : null,
         ];
     }

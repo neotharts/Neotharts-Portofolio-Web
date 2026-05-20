@@ -14,7 +14,10 @@ class HomeController extends Controller
     public function index()
     {
         $artworks = Artwork::where('is_published', true)
-            ->orderByDesc('published_at')
+            ->where('form', '!=', 'chibi')
+            ->whereJsonDoesntContain('list_service', 'Chibi')
+            ->whereJsonDoesntContain('list_service', 'chibi')
+            ->ordered()
             ->take(3)
             ->get();
 

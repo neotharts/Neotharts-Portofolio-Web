@@ -9,6 +9,7 @@ use Intervention\Image\Encoders\PngEncoder;
 use Intervention\Image\Encoders\WebpEncoder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ImageService
 {
@@ -45,7 +46,9 @@ class ImageService
         $originalName = $file->getClientOriginalName();
 
         // Generate new filename
-        $newFilename = pathinfo($originalName, PATHINFO_FILENAME)
+        $newFilename = Str::slug(pathinfo($originalName, PATHINFO_FILENAME))
+            . '-'
+            . Str::random(8)
             . $settings['suffix']
             . '.' . $settings['format'];
 

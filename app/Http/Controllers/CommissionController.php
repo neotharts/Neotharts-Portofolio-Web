@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Artwork;
 use App\Models\Service;
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 
 class CommissionController extends Controller
@@ -24,7 +25,7 @@ class CommissionController extends Controller
         foreach ($services as $service) {
             $latestArtwork = Artwork::where('is_published', true)
                 ->whereRaw('LOWER(list_service) LIKE ?', ['%' . strtolower($service->name) . '%'])
-                ->orderByDesc('published_at')
+                ->ordered()
                 ->first();
             $serviceLatestImages[$service->id] = $latestArtwork?->image;
             $serviceLatestArtworks[$service->id] = $latestArtwork;
@@ -32,7 +33,7 @@ class CommissionController extends Controller
 
         // Get all published artworks for modal
         $artworks = Artwork::where('is_published', true)
-            ->orderByDesc('published_at')
+            ->ordered()
             ->get();
 
         // Convert artworks to array for JavaScript
@@ -46,6 +47,7 @@ class CommissionController extends Controller
                 'form' => $artwork->form,
                 'list_service' => $artwork->list_service ?? [],
                 'art_for' => $artwork->art_for,
+                'sort_order' => $artwork->sort_order,
                 'published_at' => $artwork->published_at?->toISOString(),
                 'created_at' => $artwork->created_at?->toISOString(),
             ];
@@ -68,6 +70,7 @@ class CommissionController extends Controller
             'artworksArray' => $artworksArray,
             'serviceLatestImages' => $serviceLatestImages,
             'serviceLatestImagesArray' => $serviceLatestImagesArray,
+            'tosContent' => SiteSetting::getValue('tos', ''),
         ]);
     }
 }

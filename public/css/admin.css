@@ -183,8 +183,15 @@ select {
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 1.4fr 1fr;
+    grid-template-columns: 1fr;
     gap: 24px;
+}
+
+.dashboard-top-section {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 24px;
+    align-items: start;
 }
 
 .hero-card {
@@ -218,6 +225,17 @@ select {
 
 .hero-icon span {
     font-size: 36px;
+}
+
+/* Stats Row - Stacked version for 2 items */
+.stats-row-stacked {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.stats-row-stacked .stat-card {
+    width: 100%;
 }
 
 .stats-row {
@@ -517,6 +535,9 @@ tbody tr:hover {
     .dashboard-grid,
     .stats-row,
     .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .dashboard-top-section {
         grid-template-columns: 1fr;
     }
 }

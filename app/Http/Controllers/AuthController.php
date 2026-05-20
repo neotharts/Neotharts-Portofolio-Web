@@ -21,11 +21,12 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
+            'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        // Attempt login using username instead of email
+        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']], $request->boolean('remember'))) {
             $request->session()->regenerate();
 
             $user = Auth::user();
@@ -34,10 +35,10 @@ class AuthController extends Controller
             }
 
             Auth::logout();
-            return back()->withErrors(['email' => 'Akun tidak memiliki hak admin.']);
+            return back()->withErrors(['username' => 'Akun tidak memiliki hak admin.']);
         }
 
-        return back()->withErrors(['email' => 'Email atau kata sandi tidak valid.'])->onlyInput('email');
+        return back()->withErrors(['username' => 'Username atau kata sandi tidak valid.'])->onlyInput('username');
     }
 
     /**

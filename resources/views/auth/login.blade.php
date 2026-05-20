@@ -36,8 +36,8 @@
             @csrf
 
             <div class="form-group">
-                <label for="email">Email Admin</label>
-                <input id="email" type="email" name="email" value="{{ old('email') }}" placeholder="admin@neotharts.com" required autofocus>
+                <label for="username">Username Admin</label>
+                <input id="username" type="text" name="username" value="{{ old('username') }}" placeholder="Masukkan username" required autofocus>
             </div>
 
             <div class="form-group">

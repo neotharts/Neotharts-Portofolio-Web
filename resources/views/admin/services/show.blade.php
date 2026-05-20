@@ -57,6 +57,15 @@
                 </div>
                 @endif
 
+                @if($service->tos)
+                <div class="info-group">
+                    <h3>Terms of Service (TOS)</h3>
+                    <div class="tos-content">
+                        {!! $service->tos !!}
+                    </div>
+                </div>
+                @endif
+
                 <div class="info-group">
                     <h3>Status</h3>
                     @if($service->is_active)
