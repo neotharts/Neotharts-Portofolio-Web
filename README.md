@@ -153,30 +153,69 @@ Portfolio website untuk Neotharts, platform portfolio digital untuk artist denga
 ## 📁 Project Structure
 
 ```
+neotharts-portofolio/
 ├── app/
-│   ├── Http/Controllers/
-│   │   ├── Admin/          # Admin controllers
-│   │   ├── AuthController.php
-│   │   ├── HomeController.php
-│   │   └── VisitorController.php
-│   ├── Models/             # Eloquent models
-│   └── Middleware/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Admin/
+│   │   │   │   ├── AdminDashboardController.php
+│   │   │   │   ├── ArtworkController.php
+│   │   │   │   ├── ProfileController.php
+│   │   │   │   ├── ServiceController.php
+│   │   │   │   └── TosController.php
+│   │   │   ├── AuthController.php
+│   │   │   ├── ArtworkListController.php
+│   │   │   ├── CommissionController.php
+│   │   │   ├── HomeController.php
+│   │   │   └── VisitorController.php
+│   │   └── Middleware/
+│   │       └── AdminMiddleware.php
+│   ├── Models/
+│   │   ├── Artwork.php
+│   │   ├── Service.php
+│   │   ├── SiteSetting.php
+│   │   ├── User.php
+│   │   └── Visitor.php
+│   ├── Providers/
+│   │   └── AppServiceProvider.php
+│   └── Services/
+│       └── ImageService.php
+├── bootstrap/
+├── config/
 ├── database/
-│   ├── migrations/         # Database migrations
-│   ├── seeders/           # Database seeders
-│   └── factories/         # Model factories
+│   ├── factories/
+│   ├── migrations/
+│   └── seeders/
 ├── public/
-│   ├── img/               # Static images
-│   └── storage/           # Linked storage (symlink)
+│   ├── css/
+│   │   ├── admin.css
+│   │   └── commission.css
+│   └── img/
 ├── resources/
-│   ├── css/               # Stylesheets
-│   ├── js/                # JavaScript
-│   └── views/             # Blade templates
+│   ├── css/
+│   ├── img/
+│   ├── js/
+│   └── views/
+│       ├── admin/
+│       │   ├── artworks/
+│       │   ├── profile/
+│       │   ├── services/
+│       │   ├── tos/
+│       │   ├── dashboard.blade.php
+│       │   ├── layout.blade.php
+│       │   └── artworks.blade.php
+│       ├── auth/
+│       │   └── login.blade.php
+│       ├── vendor/
+│       ├── artwork_list.blade.php
+│       ├── commission.blade.php
+│       └── welcome.blade.php
 ├── routes/
-│   └── web.php            # Web routes
-└── storage/
-    ├── app/               # File uploads
-    └── logs/              # Application logs
+│   └── web.php
+├── storage/
+├── tests/
+├── composer.json
+└── package.json
 ```
 
 ## 🛡️ Security Notes
@@ -194,19 +233,38 @@ Portfolio website untuk Neotharts, platform portfolio digital untuk artist denga
 ## 🎨 Features
 
 - ✅ Admin Dashboard with Statistics
-- ✅ Artwork Management (CRUD)
-- ✅ Visitor Tracking
-- ✅ Responsive Design
-- ✅ File Upload with Storage
-- ✅ Authentication & Authorization
-- ✅ Dynamic Homepage with Latest Artworks
+- ✅ Artwork Management (CRUD + Multiple Image Upload)
+- ✅ Image Compression & Crop 4:5 Thumbnail
+- ✅ Services Management (Commission Types)
+- ✅ Visitor Tracking with 7-Day Chart
+- ✅ Commission Page (Form for Clients)
+- ✅ Dynamic Homepage & Artwork List
+- ✅ Admin Profile Management (Username/Password)
+- ✅ Responsive Design (Glass Morphism Theme)
+- ✅ Secure Authentication (Bcrypt Hashing)
 
 ## 📊 Database Schema
 
-- **users**: Admin users with role management
-- **artworks**: Portfolio artworks with categories
-- **visitors**: Website visitor tracking
-- **cache, sessions, jobs**: Laravel internals
+| Table | Description |
+|-------|-------------|
+| **users** | Admin users (username, email, password, is_admin) |
+| **artworks** | Portfolio artworks (title, images, type, list_service, art_for, is_published) |
+| **services** | Commission types (name, type, starting_price, sort_order) |
+| **visitors** | Website visitor tracking (ip_address, user_agent, visited_at) |
+| **cache, sessions, jobs** | Laravel internals |
+
+### Database Migrations
+
+| Migration | Description |
+|----------|-------------|
+| `create_users_table` | Users table |
+| `create_artworks_table` | Artworks table |
+| `add_is_admin_to_users_table` | Admin role flag |
+| `add_art_for_to_artworks_table` | Client tracking |
+| `add_list_service_to_artworks_table` | Service tags |
+| `add_username_to_users_table` | Username for login |
+| `create_services_table` | Commission types |
+| `create_visitors_table` | Visitor tracking |
 
 ## 🛠️ Development
 
