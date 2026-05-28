@@ -28,6 +28,10 @@
 | **Profile Management** | | | | ██ |
 | **Password Security** | | | | ██ |
 | **Dashboard Layout** | | | | ██ |
+| **Contact Page & Messages** | | | | ██ |
+| **3D Character Page** | | | | ██ |
+| **Live2D Homepage Widget** | | | | ██ |
+| **Fullscreen Mobile Navigation** | | | | ██ |
 
 **Legend:**
 - M1 = Minggu 1 (30 Apr - 6 Mei)
@@ -71,18 +75,26 @@
 - Fix bug crop image untuk existing artwork
 
 #### 📆 Minggu 4 (21 - 27 Mei 2026)
-- *(Dalam pengembangan)*
+- Halaman Contact dengan form pesan
+- Upload attachment pada contact form
+- Admin Messages untuk melihat dan mengelola pesan masuk
+- Halaman 3D Character interaktif
+- Live2D widget pada homepage
+- Layout responsive untuk section Latest Art + Live2D
+- Fullscreen mobile/tablet navigation reusable
+- Animasi scroll reveal khusus homepage
+- Perbaikan navbar public agar konsisten di semua halaman
 
 ---
 
 ## Deskripsi
 
-Portfolio website untuk Neotharts, platform portfolio digital untuk artist dengan fitur manajemen artwork, visitor tracking, dan admin panel. Built with Laravel 13.
+Portfolio website untuk Neotharts, platform portfolio digital untuk artist dengan fitur manajemen artwork, commission services, contact message management, visitor tracking, Live2D homepage widget, 3D character page, dan admin panel. Built with Laravel 13.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- PHP 8.2+
+- PHP 8.3+
 - Composer
 - Node.js & NPM
 - SQLite (default) or MySQL
@@ -160,18 +172,22 @@ neotharts-portofolio/
 │   │   │   ├── Admin/
 │   │   │   │   ├── AdminDashboardController.php
 │   │   │   │   ├── ArtworkController.php
+│   │   │   │   ├── MessageController.php
 │   │   │   │   ├── ProfileController.php
 │   │   │   │   ├── ServiceController.php
 │   │   │   │   └── TosController.php
 │   │   │   ├── AuthController.php
 │   │   │   ├── ArtworkListController.php
 │   │   │   ├── CommissionController.php
+│   │   │   ├── ContactController.php
 │   │   │   ├── HomeController.php
+│   │   │   ├── ThreeDController.php
 │   │   │   └── VisitorController.php
 │   │   └── Middleware/
 │   │       └── AdminMiddleware.php
 │   ├── Models/
 │   │   ├── Artwork.php
+│   │   ├── Message.php
 │   │   ├── Service.php
 │   │   ├── SiteSetting.php
 │   │   ├── User.php
@@ -179,6 +195,7 @@ neotharts-portofolio/
 │   ├── Providers/
 │   │   └── AppServiceProvider.php
 │   └── Services/
+│       ├── AttachmentService.php
 │       └── ImageService.php
 ├── bootstrap/
 ├── config/
@@ -189,8 +206,13 @@ neotharts-portofolio/
 ├── public/
 │   ├── css/
 │   │   ├── admin.css
-│   │   └── commission.css
-│   └── img/
+│   │   ├── commission.css
+│   │   └── live2d.css
+│   ├── img/
+│   ├── js/
+│   │   ├── live2d-home.js
+│   │   └── mobile-fullscreen-nav.js
+│   └── kai/
 ├── resources/
 │   ├── css/
 │   ├── img/
@@ -198,6 +220,7 @@ neotharts-portofolio/
 │   └── views/
 │       ├── admin/
 │       │   ├── artworks/
+│       │   ├── messages/
 │       │   ├── profile/
 │       │   ├── services/
 │       │   ├── tos/
@@ -206,9 +229,14 @@ neotharts-portofolio/
 │       │   └── artworks.blade.php
 │       ├── auth/
 │       │   └── login.blade.php
+│       ├── partials/
+│       │   └── mobile-fullscreen-nav.blade.php
 │       ├── vendor/
 │       ├── artwork_list.blade.php
 │       ├── commission.blade.php
+│       ├── contact.blade.php
+│       ├── home.blade.php
+│       ├── three_d.blade.php
 │       └── welcome.blade.php
 ├── routes/
 │   └── web.php
@@ -238,7 +266,13 @@ neotharts-portofolio/
 - ✅ Services Management (Commission Types)
 - ✅ Visitor Tracking with 7-Day Chart
 - ✅ Commission Page (Form for Clients)
+- ✅ Contact Page with Attachment Upload
+- ✅ Admin Messages Inbox
 - ✅ Dynamic Homepage & Artwork List
+- ✅ Live2D Homepage Widget
+- ✅ 3D Character Page
+- ✅ Fullscreen Mobile/Tablet Navigation
+- ✅ Homepage Scroll Reveal Animation
 - ✅ Admin Profile Management (Username/Password)
 - ✅ Responsive Design (Glass Morphism Theme)
 - ✅ Secure Authentication (Bcrypt Hashing)
@@ -250,6 +284,7 @@ neotharts-portofolio/
 | **users** | Admin users (username, email, password, is_admin) |
 | **artworks** | Portfolio artworks (title, images, type, list_service, art_for, is_published) |
 | **services** | Commission types (name, type, starting_price, sort_order) |
+| **messages** | Contact messages (name, email, subject, message, attachments, read status) |
 | **visitors** | Website visitor tracking (ip_address, user_agent, visited_at) |
 | **cache, sessions, jobs** | Laravel internals |
 
@@ -265,6 +300,8 @@ neotharts-portofolio/
 | `add_username_to_users_table` | Username for login |
 | `create_services_table` | Commission types |
 | `create_visitors_table` | Visitor tracking |
+| `create_messages_table` | Contact messages |
+| `add_attachments_to_messages_table` | Message attachments |
 
 ## 🛠️ Development
 
