@@ -15,15 +15,17 @@
 <body>
     <nav>
         <div class="mainav">
-            <a href="/">Home</a>
-            <a href="/artworks">Artworks</a>
-            <a href="/commission" class="active">Commissions</a>
-            <a href="/contact">Contact</a>
+            <a href="{{ route('home') }}">Home</a>
+            <a href="{{ route('artworks') }}">Artworks</a>
+            <a href="{{ route('commission') }}" class="active">Commissions</a>
+            <a href="{{ route('three_d') }}">3D</a>
+            <a href="{{ route('contact') }}">Contact</a>
         </div>
         <div class="mainavmobile">
             <span class="material-icons">menu</span>
         </div>
     </nav>
+    @include('partials.mobile-fullscreen-nav')
 
     <section class="gallery-header">
         <div class="mainheaders">
@@ -415,6 +417,7 @@
             }
         });
     </script>
+    <script src="{{ asset('js/mobile-fullscreen-nav.js') }}"></script>
 
     <style>
         /* Filter Menu Styles (like artwork filter) */

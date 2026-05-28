@@ -7,6 +7,7 @@
     <title>Document</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     @vite('resources/css/home.css')
+    <link rel="stylesheet" href="{{ asset('css/live2d.css') }}">
     <style>
         /* Loading Screen */
         .loading-screen {
@@ -65,21 +66,24 @@
 
     <nav>
         <div class="mainav">
-            <a href="/">Home</a>
-            <a href="/artworks">Artworks</a>
+            <a href="{{ route('home') }}">Home</a>
+            <a href="{{ route('artworks') }}">Artworks</a>
             <a href="{{ route('commission') }}">Commissions</a>
-            <a href="">Contact</a>
+            <a href="{{ route('three_d') }}">3D</a>
+            <a href="{{ route('contact') }}">Contact</a>
         </div>
         <div class="mainavmobile">
             <span class="material-icons">menu</span>
         </div>
         </nav>
 
+    @include('partials.mobile-fullscreen-nav')
+
     <header>
         <div class="img">
             <img src="{{ asset('img/hello.png') }}" alt="Hello">
         </div>
-        <div class="mainheader">
+        <div class="mainheader" data-scroll-reveal>
             <img class="desktop" src="{{ asset('img/header_pc_web.png') }}" alt="Main Header">
             <img class="mobile" src="{{ asset('img/header_mobile_web.png') }}" alt="Main Header">
             <div class="bottommore">
@@ -88,11 +92,11 @@
         </div>
     </header>
     <section id="latest">
-        <div class="text">
+        <div class="text" data-scroll-reveal>
             <img class="desktop" src="{{ asset('img/latest_text.png') }}" alt="Latest Artworks">
             <img class="mobile" src="{{ asset('img/latest_text_mobile.png') }}" alt="Latest Artwork">
         </div>
-        <div class="lo">
+        <div class="lo" data-scroll-reveal>
         <div class="placeholders">
             @if($artworks->count() > 0)
                 @foreach($artworks as $artwork)
@@ -121,10 +125,32 @@
             <div class="kotak"></div>
         </div>
         </div>
-        <div class="bottommore">
+
+        <div class="bottommore" data-scroll-reveal>
                 <a href="/artworks"> See more </a>
         </div>
+
+        <div class="latest-live2d-showcase" data-scroll-reveal>
+            <div class="latest-hello">
+                <img src="{{ asset('img/HELLO01.png') }}" alt="Hello">
+            </div>
+
+            <div
+                id="live2d-widget"
+                class="live2d-widget"
+                data-model-src="{{ asset('kai/Kai model.model3.json') }}"
+                data-vtube-src="{{ asset('kai/Kai model.vtube.json') }}"
+                aria-hidden="true"
+            >
+                <canvas id="live2d-canvas" class="live2d-canvas"></canvas>
+            </div>
+        </div>
     </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js"></script>
+    <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js"></script>
+    <script src="{{ asset('js/live2d-home.js') }}"></script>
 
     <script>
         // Hide loading screen when page is fully loaded
@@ -152,6 +178,39 @@
         }
 
         document.addEventListener('DOMContentLoaded', trackVisitor);
+
+        function bootScrollReveal() {
+            const revealItems = document.querySelectorAll('[data-scroll-reveal]');
+
+            if (!revealItems.length) {
+                return;
+            }
+
+            if (!('IntersectionObserver' in window)) {
+                revealItems.forEach((item) => item.classList.add('is-visible'));
+                return;
+            }
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    }
+
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                });
+            }, {
+                threshold: 0.18,
+                rootMargin: '0px 0px -8% 0px',
+            });
+
+            revealItems.forEach((item) => observer.observe(item));
+        }
+
+        document.addEventListener('DOMContentLoaded', bootScrollReveal);
+
     </script>
+    <script src="{{ asset('js/mobile-fullscreen-nav.js') }}"></script>
 </body>
 </html>

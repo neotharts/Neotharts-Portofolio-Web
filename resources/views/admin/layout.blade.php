@@ -53,6 +53,10 @@
                     <span class="material-icons-outlined">add_circle_outline</span>
                     <span>Tambah Service</span>
                 </a>
+                <a href="{{ route('admin.messages.index') }}" class="nav-item {{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
+                    <span class="material-icons-outlined">mail</span>
+                    <span>Messages</span>
+                </a>
                 <a href="{{ route('admin.tos.edit') }}" class="nav-item {{ request()->routeIs('admin.tos.*') ? 'active' : '' }}">
                     <span class="material-icons-outlined">description</span>
                     <span>TOS</span>
