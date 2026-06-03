@@ -203,9 +203,22 @@
 
             <div class="form-actions">
                 <a href="{{ route('admin.artworks.index') }}" class="button button-outline">Batal</a>
-                <button type="submit" class="button button-primary">Update Artwork</button>
+                <button type="submit" class="button button-primary artwork-submit-button" data-loading-text="Mengupload...">Update Artwork</button>
             </div>
         </form>
+
+        <div class="upload-loading-overlay" id="uploadLoadingOverlay" role="status" aria-live="polite" aria-hidden="true">
+            <div class="upload-loading-panel">
+                <span class="upload-spinner" aria-hidden="true"></span>
+                <div>
+                    <p class="upload-loading-title">Memproses artwork</p>
+                    <p class="upload-loading-text">Perubahan sedang disimpan. Gambar baru akan dikirim dan dikompres terlebih dahulu.</p>
+                    <div class="upload-progress-bar" aria-hidden="true">
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <style>
@@ -413,6 +426,109 @@
 
         #addImagesGroup .file-upload-area .material-icons-outlined {
             color: var(--accent-color, #e8a87c);
+        }
+
+        .upload-loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(15, 15, 22, 0.58);
+            backdrop-filter: blur(8px);
+        }
+
+        .upload-loading-overlay.is-visible {
+            display: flex;
+        }
+
+        .upload-loading-panel {
+            width: min(420px, 100%);
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 14px;
+            background: var(--card-bg, #fff);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+        }
+
+        .upload-spinner {
+            flex: 0 0 auto;
+            width: 34px;
+            height: 34px;
+            border: 3px solid rgba(232, 168, 124, 0.25);
+            border-top-color: var(--accent-color, #e8a87c);
+            border-radius: 50%;
+            animation: upload-spin 0.8s linear infinite;
+        }
+
+        .upload-loading-title {
+            margin: 0 0 4px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-color, #241f1b);
+        }
+
+        .upload-loading-text {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-muted, #666);
+            line-height: 1.5;
+        }
+
+        .upload-progress-bar {
+            position: relative;
+            height: 6px;
+            margin-top: 14px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: rgba(232, 168, 124, 0.18);
+        }
+
+        .upload-progress-bar span {
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 42%;
+            border-radius: inherit;
+            background: var(--accent-color, #e8a87c);
+            animation: upload-progress 1.1s ease-in-out infinite;
+        }
+
+        .artwork-submit-button.is-loading {
+            pointer-events: none;
+            opacity: 0.78;
+        }
+
+        .artwork-submit-button.is-loading::before {
+            content: '';
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-right: 8px;
+            vertical-align: -2px;
+            border: 2px solid rgba(255, 255, 255, 0.45);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: upload-spin 0.8s linear infinite;
+        }
+
+        @keyframes upload-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes upload-progress {
+            0% {
+                transform: translateX(-120%);
+            }
+
+            100% {
+                transform: translateX(240%);
+            }
         }
     </style>
 
@@ -1420,8 +1536,44 @@
             }
         }
 
+        function showUploadLoading(form) {
+            if (form.dataset.submitting === 'true') {
+                return false;
+            }
+
+            form.dataset.submitting = 'true';
+
+            const submitButton = form.querySelector('.artwork-submit-button');
+            const overlay = document.getElementById('uploadLoadingOverlay');
+
+            if (submitButton) {
+                submitButton.dataset.originalText = submitButton.textContent;
+                submitButton.textContent = submitButton.dataset.loadingText || 'Mengupload...';
+                submitButton.classList.add('is-loading');
+                submitButton.disabled = true;
+            }
+
+            form.querySelectorAll('input, select, textarea, button').forEach(control => {
+                if (control.type !== 'hidden') {
+                    control.setAttribute('aria-disabled', 'true');
+                }
+            });
+
+            if (overlay) {
+                overlay.classList.add('is-visible');
+                overlay.setAttribute('aria-hidden', 'false');
+            }
+
+            return true;
+        }
+
         // Handle form submission - process cropped existing images
         document.querySelector('.artwork-form').addEventListener('submit', function(e) {
+            if (!showUploadLoading(this)) {
+                e.preventDefault();
+                return;
+            }
+
             // Process cropped existing images
             const croppedExisting = Object.keys(window.croppedExistingImages || {});
             if (croppedExisting.length > 0) {

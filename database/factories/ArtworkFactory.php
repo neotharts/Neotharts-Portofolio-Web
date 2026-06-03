@@ -18,6 +18,8 @@ class ArtworkFactory extends Factory
      */
     public function definition(): array
     {
+        $services = fake()->randomElements(['Headshot', 'Halfbody', 'Fullbody', 'Chibi'], fake()->numberBetween(1, 2));
+
         return [
             'user_id' => User::factory(),
             'title' => fake()->sentence(3),
@@ -26,6 +28,7 @@ class ArtworkFactory extends Factory
             'images' => [$image],
             'type' => fake()->randomElement(['komisi', 'personal', 'organisasi', 'fanart']),
             'form' => fake()->randomElement(['chibi', 'headshot', 'halfbody', 'fullbody']),
+            'list_service' => $services,
             'is_published' => fake()->boolean(70),
             'sort_order' => 0,
             'published_at' => fake()->boolean(70) ? now()->subDays(fake()->numberBetween(1, 30)) : null,

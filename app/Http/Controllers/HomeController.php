@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Artwork;
+use App\Repositories\ArtworkRepository;
 
 class HomeController extends Controller
 {
@@ -11,15 +11,9 @@ class HomeController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(ArtworkRepository $artworkRepository)
     {
-        $artworks = Artwork::where('is_published', true)
-            ->where('form', '!=', 'chibi')
-            ->whereJsonDoesntContain('list_service', 'Chibi')
-            ->whereJsonDoesntContain('list_service', 'chibi')
-            ->ordered()
-            ->take(3)
-            ->get();
+        $artworks = $artworkRepository->homepageLatest();
 
         return view('home', compact('artworks'));
     }

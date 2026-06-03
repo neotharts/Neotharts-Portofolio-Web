@@ -28,6 +28,14 @@ class Service extends Model
     ];
 
     /**
+     * Artworks that use this service.
+     */
+    public function artworks()
+    {
+        return $this->belongsToMany(Artwork::class)->withTimestamps();
+    }
+
+    /**
      * Get features as array
      */
     public function getFeaturesArrayAttribute()

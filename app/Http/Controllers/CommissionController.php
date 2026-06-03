@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Artwork;
 use App\Models\Service;
 use App\Models\SiteSetting;
-use Illuminate\Http\Request;
+use App\Repositories\ArtworkRepository;
 
 class CommissionController extends Controller
 {
     /**
      * Display commission page.
      */
-    public function index()
+    public function index(ArtworkRepository $artworkRepository)
     {
         // Get active services, ordered by sort_order
         $services = Service::active()
@@ -23,35 +23,16 @@ class CommissionController extends Controller
         $serviceLatestImages = [];
         $serviceLatestArtworks = [];
         foreach ($services as $service) {
-            $latestArtwork = Artwork::where('is_published', true)
-                ->whereRaw('LOWER(list_service) LIKE ?', ['%' . strtolower($service->name) . '%'])
-                ->ordered()
-                ->first();
+            $latestArtwork = $artworkRepository->latestForService($service);
             $serviceLatestImages[$service->id] = $latestArtwork?->image;
             $serviceLatestArtworks[$service->id] = $latestArtwork;
         }
 
         // Get all published artworks for modal
-        $artworks = Artwork::where('is_published', true)
-            ->ordered()
-            ->get();
+        $artworks = $artworkRepository->filteredPublished();
 
         // Convert artworks to array for JavaScript
-        $artworksArray = $artworks->map(function ($artwork) {
-            return [
-                'id' => $artwork->id,
-                'title' => $artwork->title,
-                'description' => $artwork->description,
-                'image' => $artwork->image,
-                'type' => $artwork->type,
-                'form' => $artwork->form,
-                'list_service' => $artwork->list_service ?? [],
-                'art_for' => $artwork->art_for,
-                'sort_order' => $artwork->sort_order,
-                'published_at' => $artwork->published_at?->toISOString(),
-                'created_at' => $artwork->created_at?->toISOString(),
-            ];
-        })->toArray();
+        $artworksArray = $artworkRepository->toPublicArray($artworks);
 
         // Convert service latest artworks to array for smart crop JS
         $serviceLatestImagesArray = [];

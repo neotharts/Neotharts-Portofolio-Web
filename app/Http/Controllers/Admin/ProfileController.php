@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\UpdatePasswordRequest;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
@@ -21,25 +21,11 @@ class ProfileController extends Controller
     /**
      * Update the profile.
      */
-    public function update(Request $request)
+    public function update(ProfileUpdateRequest $request)
     {
         $user = auth()->user();
+        $validated = $request->validated();
 
-        $rules = [
-            'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
-        ];
-
-        $messages = [
-            'name.required' => 'Nama wajib diisi',
-            'username.required' => 'Username wajib diisi',
-            'username.unique' => 'Username sudah digunakan oleh pengguna lain',
-        ];
-
-        // Validate basic info
-        $validated = $request->validate($rules, $messages);
-
-        // Update name and username
         $user->name = $validated['name'];
         $user->username = $validated['username'];
         $user->save();
@@ -50,27 +36,18 @@ class ProfileController extends Controller
     /**
      * Update the password.
      */
-    public function updatePassword(Request $request)
+    public function updatePassword(UpdatePasswordRequest $request)
     {
-        $request->validate([
-            'current_password' => 'required|string',
-            'password' => ['required', 'string', 'min:6', 'confirmed', Password::defaults()],
-        ], [
-            'current_password.required' => 'Password saat ini wajib diisi',
-            'password.required' => 'Password baru wajib diisi',
-            'password.min' => 'Password minimal 6 karakter',
-            'password.confirmed' => 'Konfirmasi password tidak cocok',
-        ]);
-
         $user = auth()->user();
+        $validated = $request->validated();
 
         // Verify current password
-        if (!Hash::check($request->current_password, $user->password)) {
+        if (!Hash::check($validated['current_password'], $user->password)) {
             return back()->withErrors(['current_password' => 'Password saat ini tidak cocok']);
         }
 
         // Update password
-        $user->password = Hash::make($request->password);
+        $user->password = Hash::make($validated['password']);
         $user->save();
 
         return redirect()->back()->with('success', 'Password berhasil diperbarui!');

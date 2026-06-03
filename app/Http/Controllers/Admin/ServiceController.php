@@ -3,35 +3,36 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ServiceRequest;
 use App\Http\Middleware\AdminMiddleware;
 use App\Models\Service;
-use Illuminate\Http\Request;
+use App\Repositories\ArtworkRepository;
+use App\Services\ServiceService;
 
 class ServiceController extends Controller
 {
+    protected $serviceService;
+
     /**
      * Hanya admin yang bisa akses
      */
-    public function __construct()
+    public function __construct(ServiceService $serviceService)
     {
         $this->middleware(AdminMiddleware::class);
+        $this->serviceService = $serviceService;
     }
 
     /**
      * Display a listing of services.
      */
-    public function index()
+    public function index(ArtworkRepository $artworkRepository)
     {
         $services = Service::ordered()->get();
 
         // Get latest artwork for each service
         $latestArtworks = [];
         foreach ($services as $service) {
-            // Use LIKE for case-insensitive search (SQLite compatible)
-            $latestArtwork = \App\Models\Artwork::where('is_published', true)
-                ->whereRaw('LOWER(list_service) LIKE ?', ['%' . strtolower($service->name) . '%'])
-                ->orderByDesc('published_at')
-                ->first();
+            $latestArtwork = $artworkRepository->latestForService($service);
 
             $latestArtworks[$service->id] = $latestArtwork;
         }
@@ -50,36 +51,9 @@ class ServiceController extends Controller
     /**
      * Store a newly created service.
      */
-    public function store(Request $request)
+    public function store(ServiceRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'starting_price' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
-            'features' => 'nullable|string',
-            'is_active' => 'boolean',
-            'sort_order' => 'nullable|integer|min:0',
-        ]);
-
-        // Parse features from textarea (one per line)
-        if (!empty($validated['features'])) {
-            $features = array_filter(array_map('trim', explode("\n", $validated['features'])));
-            $validated['features'] = json_encode($features);
-        }
-
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . '_' . strtolower(str_replace(' ', '_', $validated['name'])) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('services', $filename, 'public');
-            $validated['image'] = $path;
-        }
-
-        // Set type to komisi by default (or remove it)
-        $validated['type'] = 'komisi';
-
-        Service::create($validated);
+        $this->serviceService->create($request->validated(), $request->file('image'));
 
         return redirect()->route('admin.services.index')
                         ->with('success', 'Service berhasil ditambahkan!');
@@ -88,13 +62,9 @@ class ServiceController extends Controller
     /**
      * Display the specified service.
      */
-    public function show(Service $service)
+    public function show(Service $service, ArtworkRepository $artworkRepository)
     {
-        // Get latest artwork using this service (case-insensitive)
-        $latestArtwork = \App\Models\Artwork::where('is_published', true)
-            ->whereRaw('LOWER(list_service) LIKE ?', ['%' . strtolower($service->name) . '%'])
-            ->orderByDesc('published_at')
-            ->first();
+        $latestArtwork = $artworkRepository->latestForService($service);
 
         return view('admin.services.show', compact('service', 'latestArtwork'));
     }
@@ -110,39 +80,14 @@ class ServiceController extends Controller
     /**
      * Update the specified service.
      */
-    public function update(Request $request, Service $service)
+    public function update(ServiceRequest $request, Service $service)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'starting_price' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
-            'features' => 'nullable|string',
-            'is_active' => 'boolean',
-            'sort_order' => 'nullable|integer|min:0',
-        ]);
-
-        // Parse features from textarea (one per line)
-        if (!empty($validated['features'])) {
-            $features = array_filter(array_map('trim', explode("\n", $validated['features'])));
-            $validated['features'] = json_encode($features);
-        } else {
-            $validated['features'] = null;
-        }
-
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            // Delete old image
-            if ($service->image && \Storage::disk('public')->exists($service->image)) {
-                \Storage::disk('public')->delete($service->image);
-            }
-            $file = $request->file('image');
-            $filename = time() . '_' . strtolower(str_replace(' ', '_', $validated['name'])) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('services', $filename, 'public');
-            $validated['image'] = $path;
-        }
-
-        $service->update($validated);
+        $this->serviceService->update(
+            $service,
+            $request->validated(),
+            $request->file('image'),
+            $request->boolean('is_active')
+        );
 
         return redirect()->route('admin.services.index')
                         ->with('success', 'Service berhasil diperbarui!');
@@ -153,12 +98,7 @@ class ServiceController extends Controller
      */
     public function destroy(Service $service)
     {
-        // Delete image
-        if ($service->image && \Storage::disk('public')->exists($service->image)) {
-            \Storage::disk('public')->delete($service->image);
-        }
-
-        $service->delete();
+        $this->serviceService->delete($service);
 
         return redirect()->route('admin.services.index')
                         ->with('success', 'Service berhasil dihapus!');

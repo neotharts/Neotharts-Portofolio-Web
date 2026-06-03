@@ -53,6 +53,14 @@ class Artwork extends Model
     }
 
     /**
+     * Services attached to this artwork.
+     */
+    public function services()
+    {
+        return $this->belongsToMany(Service::class)->withTimestamps();
+    }
+
+    /**
      * Scopes untuk query optimization
      */
 
