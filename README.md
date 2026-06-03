@@ -160,7 +160,7 @@ Portfolio website untuk Neotharts, platform portfolio digital untuk artist denga
 
 - **URL:** `/login`
 - **Username:** `admin`
-- **Password:** `password`
+- **Password:** `165165165Nnn`
 
 ## 📁 Project Structure
 
