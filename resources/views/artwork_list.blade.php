@@ -123,9 +123,11 @@
         const urlParams = new URLSearchParams(window.location.search);
         let currentTypeFilter = urlParams.get('type') || '';
         let currentServiceFilter = urlParams.get('service') || '';
+        const requestedArtworkId = urlParams.get('artwork');
         let currentModalImages = [];
         let currentModalImageIndex = 0;
         let modalSlideDirection = 'next';
+        let isInitialRender = true;
 
         console.log('All artworks loaded:', allArtworks.length, allArtworks);
 
@@ -180,6 +182,9 @@
                 console.log('Artwork not found, id:', id, 'allArtworks:', allArtworks);
                 return;
             }
+
+            // Reset initial render flag for new modal
+            isInitialRender = true;
 
             setupModalImages(artwork);
             document.getElementById('modalTitle').textContent = artwork.title || 'No Title';
@@ -268,9 +273,16 @@
             }
 
             modalImage.src = '/storage/' + currentModalImages[currentModalImageIndex];
-            modalImage.classList.remove('slide-next', 'slide-prev');
-            void modalImage.offsetWidth;
-            modalImage.classList.add(modalSlideDirection === 'prev' ? 'slide-prev' : 'slide-next');
+
+            // Only animate on navigation, not on initial render
+            if (isInitialRender) {
+                isInitialRender = false;
+            } else {
+                modalImage.classList.remove('slide-next', 'slide-prev');
+                void modalImage.offsetWidth;
+                modalImage.classList.add(modalSlideDirection === 'prev' ? 'slide-prev' : 'slide-next');
+            }
+
             counter.textContent = `${currentModalImageIndex + 1} / ${currentModalImages.length}`;
 
             thumbs.forEach((thumb, index) => {
@@ -299,7 +311,79 @@
         function closeModalDirect() {
             document.getElementById('modalOverlay').classList.remove('active');
             document.body.style.overflow = '';
+            // Reset initial render flag so next modal open doesn't animate
+            isInitialRender = true;
         }
+
+        // Enhanced auto-open modal after full page load
+        function autoOpenRequestedArtwork() {
+            if (!requestedArtworkId) {
+                return;
+            }
+
+            const artworkExists = allArtworks.some(artwork => artwork.id == requestedArtworkId);
+            if (!artworkExists) {
+                console.log('Requested artwork not found:', requestedArtworkId);
+                return;
+            }
+
+            // Wait for gallery to be fully visible and rendered
+            function tryOpenModal() {
+                const skeleton = document.getElementById('skeletonWrapper');
+                const gallery = document.getElementById('galleryContent');
+
+                // Check if skeleton is hidden (gallery is visible)
+                const skeletonHidden = !skeleton || skeleton.style.display === 'none';
+                const galleryVisible = gallery && parseFloat(getComputedStyle(gallery).opacity) > 0.5;
+
+                // Check if main images are loaded
+                const mainImages = document.querySelectorAll('.gallery-content .placeholder img');
+                const allImagesLoaded = Array.from(mainImages).every(img =>
+                    img.complete && img.naturalHeight !== 0
+                );
+
+                if (skeletonHidden && (galleryVisible || allImagesLoaded)) {
+                    // All conditions met, open the modal
+                    openModal(requestedArtworkId);
+                    return true;
+                }
+                return false;
+            }
+
+            // Try immediately if already ready, otherwise wait a bit
+            if (!tryOpenModal()) {
+                // Retry after a short delay to allow animations to complete
+                let attempts = 0;
+                const maxAttempts = 20;
+                const checkInterval = setInterval(() => {
+                    attempts++;
+                    if (tryOpenModal() || attempts >= maxAttempts) {
+                        clearInterval(checkInterval);
+                        if (attempts >= maxAttempts) {
+                            // Fallback: try to open anyway if gallery has images
+                            const mainImages = document.querySelectorAll('.gallery-content .placeholder img');
+                            if (mainImages.length > 0) {
+                                openModal(requestedArtworkId);
+                            }
+                        }
+                    }
+                }, 100);
+            }
+        }
+
+        // Enhanced load handler that waits for full page render
+        let autoOpenHandled = false;
+        window.addEventListener('load', function() {
+            // Small delay to ensure DOM is fully painted
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    if (!autoOpenHandled && requestedArtworkId) {
+                        autoOpenHandled = true;
+                        autoOpenRequestedArtwork();
+                    }
+                });
+            });
+        });
 
         // Close modal with Escape key
         document.addEventListener('keydown', function(e) {

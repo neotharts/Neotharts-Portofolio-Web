@@ -240,31 +240,27 @@ nav{
 }
 
 .modal-image img.slide-next {
-    animation: modalSlideFromRight 0.28s ease both;
+    animation: modalSlideFromRight 0.25s ease both;
 }
 
 .modal-image img.slide-prev {
-    animation: modalSlideFromLeft 0.28s ease both;
+    animation: modalSlideFromLeft 0.25s ease both;
 }
 
 @keyframes modalSlideFromRight {
     from {
-        opacity: 0;
-        transform: translateX(36px);
+        transform: translateX(42px);
     }
     to {
-        opacity: 1;
         transform: translateX(0);
     }
 }
 
 @keyframes modalSlideFromLeft {
     from {
-        opacity: 0;
-        transform: translateX(-36px);
+        transform: translateX(-42px);
     }
     to {
-        opacity: 1;
         transform: translateX(0);
     }
 }

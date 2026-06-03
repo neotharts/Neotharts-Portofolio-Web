@@ -100,7 +100,7 @@
         <div class="placeholders">
             @if($artworks->count() > 0)
                 @foreach($artworks as $artwork)
-                    <a href="/artworks" class="placeholder">
+                    <a href="{{ route('artworks', ['artwork' => $artwork->id]) }}" class="placeholder">
                         @if($artwork->image)
                             <img src="{{ asset('storage/' . $artwork->image) }}" alt="{{ $artwork->title }}">
                         @else
