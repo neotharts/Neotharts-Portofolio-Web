@@ -22,7 +22,7 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.services.store') }}" method="POST" enctype="multipart/form-data" class="artwork-form">
+        <form action="{{ route('admin.services.store') }}" method="POST" enctype="multipart/form-data" class="artwork-form" autocomplete="off">
             @csrf
 
             <div class="form-section">
@@ -38,7 +38,7 @@
 
                 <div class="form-group">
                     <label for="description">Deskripsi</label>
-                    <textarea name="description" id="description" placeholder="Jelaskan tentang service Anda..." rows="4">{{ old('description') }}</textarea>
+                    <textarea name="description" id="description" placeholder="Jelaskan tentang service Anda..." rows="4" autocomplete="off">{{ old('description') }}</textarea>
                     @error('description')
                         <span class="error-message">{{ $message }}</span>
                     @enderror

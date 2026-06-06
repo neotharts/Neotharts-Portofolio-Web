@@ -851,7 +851,7 @@
 
     <!-- Tab: Generate Invoice -->
     <div id="tab-generate" class="tab-content active">
-        <form id="invoiceForm" action="{{ route('admin.invoices.store') }}" method="POST">
+        <form id="invoiceForm" action="{{ route('admin.invoices.store') }}" method="POST" autocomplete="off">
             @csrf
             <div class="generate-invoice-section">
                 <!-- Invoice Header Card - Neotharts Branding -->
@@ -882,21 +882,21 @@
                             <span class="material-icons-outlined">badge</span>
                             Nama Client
                         </label>
-                        <input type="text" name="client_name" placeholder="Masukkan nama client" required>
+                        <input type="text" name="client_name" placeholder="Masukkan nama client" autocomplete="off" required>
                     </div>
                     <div class="info-group">
                         <label>
                             <span class="material-icons-outlined">alternate_email</span>
                             Email Client
                         </label>
-                        <input type="email" name="client_email" placeholder="email@example.com">
+                        <input type="email" name="client_email" placeholder="email@example.com" autocomplete="off">
                     </div>
                     <div class="info-group">
                         <label>
                             <span class="material-icons-outlined">camera_alt</span>
                             Instagram Client
                         </label>
-                        <input type="text" name="client_instagram" placeholder="@username">
+                        <input type="text" name="client_instagram" placeholder="@username" autocomplete="off">
                     </div>
                 </div>
 

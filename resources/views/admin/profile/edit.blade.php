@@ -18,7 +18,7 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.profile.update') }}" method="POST" class="profile-form">
+        <form action="{{ route('admin.profile.update') }}" method="POST" class="profile-form" autocomplete="off">
             @csrf
             @method('PUT')
 
@@ -27,7 +27,7 @@
 
                 <div class="form-group">
                     <label for="name">Nama Lengkap</label>
-                    <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" placeholder="Masukkan nama lengkap" required>
+                    <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" placeholder="Masukkan nama lengkap" autocomplete="off" required>
                     @error('name')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -35,7 +35,7 @@
 
                 <div class="form-group">
                     <label for="username">Username Login</label>
-                    <input type="text" name="username" id="username" value="{{ old('username', $user->username ?? '') }}" placeholder="Masukkan username untuk login" required>
+                    <input type="text" name="username" id="username" value="{{ old('username', $user->username ?? '') }}" placeholder="Masukkan username untuk login" autocomplete="off" required>
                     <small class="muted-text">Username ini digunakan untuk login ke dashboard admin.</small>
                     @error('username')
                         <span class="error-message">{{ $message }}</span>
@@ -59,7 +59,7 @@
 
         <hr class="form-divider">
 
-        <form action="{{ route('admin.profile.password') }}" method="POST" class="password-form">
+        <form action="{{ route('admin.profile.password') }}" method="POST" class="password-form" autocomplete="off">
             @csrf
             @method('PUT')
 

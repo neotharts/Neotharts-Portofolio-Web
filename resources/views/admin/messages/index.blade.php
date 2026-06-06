@@ -22,8 +22,8 @@
 
     <!-- Filter Bar -->
     <div class="filter-bar">
-        <form action="{{ route('admin.messages.index') }}" method="GET" class="filter-form">
-            <input type="text" name="search" class="filter-input" placeholder="Search name, email, or subject..." value="{{ request('search') }}">
+        <form action="{{ route('admin.messages.index') }}" method="GET" class="filter-form" autocomplete="off">
+            <input type="text" name="search" class="filter-input" placeholder="Search name, email, or subject..." value="{{ request('search') }}" autocomplete="off">
             <select name="filter" class="filter-select">
                 <option value="">All Messages</option>
                 <option value="unread" {{ request('filter') === 'unread' ? 'selected' : '' }}>Unread</option>

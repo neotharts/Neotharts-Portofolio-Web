@@ -28,7 +28,7 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.tos.update') }}" method="POST" class="artwork-form">
+        <form action="{{ route('admin.tos.update') }}" method="POST" class="artwork-form" autocomplete="off">
             @csrf
             @method('PUT')
 

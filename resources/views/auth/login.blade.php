@@ -32,7 +32,7 @@
             </div>
         @endif
 
-        <form action="{{ route('login.submit') }}" method="POST" class="auth-form">
+        <form action="{{ route('login.submit') }}" method="POST" class="auth-form" autocomplete="off">
             @csrf
 
             <div class="form-group">

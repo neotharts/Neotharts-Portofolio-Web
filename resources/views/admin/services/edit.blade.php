@@ -22,7 +22,7 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.services.update', $service) }}" method="POST" enctype="multipart/form-data" class="artwork-form">
+        <form action="{{ route('admin.services.update', $service) }}" method="POST" enctype="multipart/form-data" class="artwork-form" autocomplete="off">
             @csrf
             @method('PUT')
 

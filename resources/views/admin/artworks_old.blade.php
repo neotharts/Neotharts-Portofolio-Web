@@ -14,8 +14,8 @@
 
         <!-- Filter & Search -->
         <div class="filter-bar">
-            <form method="GET" action="{{ route('admin.artworks.index') }}" class="filter-form">
-                <input type="text" name="search" placeholder="Cari artwork..." value="{{ request('search') }}" class="filter-input">
+            <form method="GET" action="{{ route('admin.artworks.index') }}" class="filter-form" autocomplete="off">
+                <input type="text" name="search" placeholder="Cari artwork..." value="{{ request('search') }}" class="filter-input" autocomplete="off">
 
                 <select name="type" class="filter-select">
                     <option value="">Semua Tipe</option>

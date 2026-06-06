@@ -406,23 +406,23 @@
                 <!-- Contact Form -->
                 <div class="form-section glass-card">
                     <h2>Send a Message</h2>
-                    <form id="contact-form" class="contact-form">
+                    <form id="contact-form" class="contact-form" autocomplete="off">
                         @csrf
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" id="name" name="name" placeholder="Your name" required>
+                            <input type="text" id="name" name="name" placeholder="Your name" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                            <input type="email" id="email" name="email" placeholder="your@email.com" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label for="subject">Subject</label>
-                            <input type="text" id="subject" name="subject" placeholder="What's this about?">
+                            <input type="text" id="subject" name="subject" placeholder="What's this about?" autocomplete="off">
                         </div>
                         <div class="form-group">
                             <label for="message">Message</label>
-                            <textarea id="message" name="message" placeholder="Write your message here..." rows="6" required></textarea>
+                            <textarea id="message" name="message" placeholder="Write your message here..." rows="6" autocomplete="off" required></textarea>
                         </div>
 
                         <!-- Attachment Upload -->

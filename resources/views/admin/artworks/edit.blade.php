@@ -23,7 +23,7 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.artworks.update', $artwork) }}" method="POST" enctype="multipart/form-data" class="artwork-form">
+        <form action="{{ route('admin.artworks.update', $artwork) }}" method="POST" enctype="multipart/form-data" class="artwork-form" autocomplete="off">
             @csrf
             @method('PUT')
 
@@ -68,7 +68,7 @@
 
                     <div class="form-group">
                         <label for="art_for">Art For (Untuk siapa) *</label>
-                        <input type="text" name="art_for" id="art_for" value="{{ old('art_for', $artwork->art_for ?? 'myself') }}" placeholder="Nama client atau 'myself'" required>
+                        <input type="text" name="art_for" id="art_for" value="{{ old('art_for', $artwork->art_for ?? 'myself') }}" placeholder="Nama client atau 'myself'" autocomplete="off" required>
                         <small class="muted-text">Nama client/untuk siapa karya ini. Kosong = "myself"</small>
                         @error('art_for')
                             <span class="error-message">{{ $message }}</span>
@@ -78,7 +78,7 @@
 
                 <div class="form-group">
                     <label for="sort_order">Urutan Tampil</label>
-                    <input type="number" name="sort_order" id="sort_order" value="{{ old('sort_order', $artwork->sort_order ?? 0) }}" min="0" step="1" placeholder="0">
+                    <input type="number" name="sort_order" id="sort_order" value="{{ old('sort_order', $artwork->sort_order ?? 0) }}" min="0" step="1" placeholder="0" autocomplete="off">
                     <small class="muted-text">Angka lebih kecil akan tampil lebih dulu. Jika sama, artwork terbaru tampil lebih dulu.</small>
                     @error('sort_order')
                         <span class="error-message">{{ $message }}</span>

@@ -23,7 +23,7 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.artworks.store') }}" method="POST" enctype="multipart/form-data" class="artwork-form">
+        <form action="{{ route('admin.artworks.store') }}" method="POST" enctype="multipart/form-data" class="artwork-form" autocomplete="off">
             @csrf
 
             <div class="form-section">
@@ -77,7 +77,7 @@
 
                 <div class="form-group">
                     <label for="sort_order">Urutan Tampil</label>
-                    <input type="number" name="sort_order" id="sort_order" value="{{ old('sort_order', 0) }}" min="0" step="1" placeholder="0">
+                    <input type="number" name="sort_order" id="sort_order" value="{{ old('sort_order', 0) }}" min="0" step="1" placeholder="0" autocomplete="off">
                     <small class="muted-text">Angka lebih kecil akan tampil lebih dulu. Jika sama, artwork terbaru tampil lebih dulu.</small>
                     @error('sort_order')
                         <span class="error-message">{{ $message }}</span>
