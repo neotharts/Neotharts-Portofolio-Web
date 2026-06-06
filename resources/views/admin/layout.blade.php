@@ -57,6 +57,10 @@
                     <span class="material-icons-outlined">mail</span>
                     <span>Messages</span>
                 </a>
+                <a href="{{ route('admin.invoices.index') }}" class="nav-item {{ request()->routeIs('admin.invoices.*') ? 'active' : '' }}">
+                    <span class="material-icons-outlined">receipt_long</span>
+                    <span>Invoice</span>
+                </a>
                 <a href="{{ route('admin.tos.edit') }}" class="nav-item {{ request()->routeIs('admin.tos.*') ? 'active' : '' }}">
                     <span class="material-icons-outlined">description</span>
                     <span>TOS</span>
@@ -94,6 +98,16 @@
             </header>
 
             <section class="page-content">
+                @if(session('success'))
+                    <div class="alert alert-success" style="margin: 1rem; padding: 1rem; background: #dcfce7; color: #166534; border-radius: 10px; border-left: 4px solid #22c55e;">
+                        <strong>Berhasil!</strong> {{ session('success') }}
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-error" style="margin: 1rem; padding: 1rem; background: #fee2e2; color: #dc2626; border-radius: 10px; border-left: 4px solid #ef4444;">
+                        <strong>Gagal!</strong> {{ session('error') }}
+                    </div>
+                @endif
                 @yield('content')
             </section>
         </main>

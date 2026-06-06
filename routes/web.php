@@ -13,6 +13,7 @@ use App\Http\Controllers\ArtworkListController;
 use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\ThreeDController;
 use App\Http\Controllers\Admin\MessageController;
+use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\ContactController;
 use App\Http\Middleware\AdminMiddleware;
 
@@ -64,4 +65,13 @@ Route::prefix('admin')->name('admin.')->middleware([AdminMiddleware::class])->gr
     Route::post('/messages/mark-all-read', [MessageController::class, 'markAllAsRead'])->name('messages.markAllAsRead');
     Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
     Route::get('/messages/{message}/download/{index}', [MessageController::class, 'download'])->name('messages.download');
+
+    // Invoices
+    Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
+    Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
+    Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
+    Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->name('invoices.pdf');
+    Route::post('/invoices/{invoice}/status', [InvoiceController::class, 'updateStatus'])->name('invoices.updateStatus');
+    Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
 });

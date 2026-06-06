@@ -21,6 +21,7 @@
 | **Image Compression** | | ██ | | |
 | **Services Management** | | | ██ | |
 | **Commission Page** | | | ██ | |
+| **Invoice & Order List** | | | | ██ |
 | **Multiple Image Upload** | | | ██ | |
 | **Image Crop 4:5** | | | ██ | |
 | **Visitor Chart** | | | ██ | |
@@ -66,6 +67,7 @@
 - Halaman commission page
 - Multiple image upload (max 12)
 - Fitur crop 4:5 untuk thumbnail
+- Public commission order list overlay / readonly progress board
 - Visitor chart 7 hari terakhir
 - Login dengan username (bukan email)
 - Menu profil admin (ubah nama, username, password)
@@ -78,6 +80,7 @@
 - Halaman Contact dengan form pesan
 - Upload attachment pada contact form
 - Admin Messages untuk melihat dan mengelola pesan masuk
+- Admin invoice management dengan export PDF
 - Halaman 3D Character interaktif
 - Live2D widget pada homepage
 - Layout responsive untuk section Latest Art + Live2D
@@ -89,7 +92,7 @@
 
 ## Deskripsi
 
-Portfolio website untuk Neotharts, platform portfolio digital untuk artist dengan fitur manajemen artwork, commission services, contact message management, visitor tracking, Live2D homepage widget, 3D character page, dan admin panel. Built with Laravel 13.
+Portfolio website untuk Neotharts, platform portfolio digital untuk artist dengan fitur manajemen artwork, commission services, invoice management dengan PDF export, public order list overlay, contact message management, visitor tracking, Live2D homepage widget, 3D character page, dan admin panel. Built with Laravel 13.
 
 ## 🚀 Quick Start
 
@@ -220,6 +223,7 @@ neotharts-portofolio/
 │   └── views/
 │       ├── admin/
 │       │   ├── artworks/
+│       │   ├── invoices/
 │       │   ├── messages/
 │       │   ├── profile/
 │       │   ├── services/
@@ -266,6 +270,8 @@ neotharts-portofolio/
 - ✅ Services Management (Commission Types)
 - ✅ Visitor Tracking with 7-Day Chart
 - ✅ Commission Page (Form for Clients)
+- ✅ Admin Invoice Management + PDF Export
+- ✅ Public Order List Overlay (readonly commission progress)
 - ✅ Contact Page with Attachment Upload
 - ✅ Admin Messages Inbox
 - ✅ Dynamic Homepage & Artwork List

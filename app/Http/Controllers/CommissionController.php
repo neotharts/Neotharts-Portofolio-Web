@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Artwork;
 use App\Models\Service;
 use App\Models\SiteSetting;
+use App\Models\Invoice;
 use App\Repositories\ArtworkRepository;
 
 class CommissionController extends Controller
@@ -45,6 +46,8 @@ class CommissionController extends Controller
             }
         }
 
+        $invoices = Invoice::with('items')->orderBy('created_at', 'desc')->get();
+
         return view('commission', [
             'services' => $services,
             'artworks' => $artworks,
@@ -52,6 +55,7 @@ class CommissionController extends Controller
             'serviceLatestImages' => $serviceLatestImages,
             'serviceLatestImagesArray' => $serviceLatestImagesArray,
             'tosContent' => SiteSetting::getValue('tos', ''),
+            'invoices' => $invoices,
         ]);
     }
 }

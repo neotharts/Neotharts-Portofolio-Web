@@ -37,6 +37,7 @@
         <div class="coms_menu_container">
             <div class="filter-list">
                 <a href="#commission-list" class="filter-item">Commission</a>
+                <a href="#progressBoardModal" class="filter-item" id="openProgressBoard">Order list</a>
                 <a href="#tosModal" class="filter-item">TOS</a>
             </div>
         </div>
@@ -74,6 +75,54 @@
         </div>
     </section>
     @endif
+
+    @php
+        $statusLabels = \App\Models\Invoice::getStatusLabels();
+        $statusColors = \App\Models\Invoice::getStatusColors();
+    @endphp
+
+    <div class="progress-board-modal-overlay" id="progressBoardModal">
+        <div class="progress-board-modal-content" onclick="event.stopPropagation()">
+            <div class="progress-board-header">
+                <div>
+                    <h2>Order list</h2>
+                </div>
+                <button class="modal-close-btn" onclick="closeProgressBoard()">×</button>
+            </div>
+
+            <div class="kanban-container">
+            @foreach($statusLabels as $statusKey => $statusLabel)
+                <div class="kanban-column">
+                    <div class="kanban-column-header" style="background: {{ $statusColors[$statusKey] ?? '#ccc' }};">
+                        <h3>{{ $statusLabel }}</h3>
+                        <span>{{ $invoices->where('status', $statusKey)->count() }}</span>
+                    </div>
+                    <div class="kanban-column-body">
+                        @forelse($invoices->where('status', $statusKey) as $invoice)
+                            <div class="client-card readonly">
+                                <div class="client-card-title">{{ $invoice->client_name ?: 'Client' }}</div>
+                                <div class="client-card-subtitle">#{{ $invoice->invoice_number }}</div>
+                                <div class="client-card-details">
+                                    <span>{{ strtoupper($invoice->payment_method ?? '-') }}</span>
+                                    <span>Rp {{ number_format($invoice->total_amount ?? 0, 0, ',', '.') }}</span>
+                                </div>
+                                @if($invoice->items->count())
+                                    <div class="client-card-items">
+                                        @foreach($invoice->items as $item)
+                                            <div class="client-card-item">{{ $item->service_name ?? $item->service?->name ?? 'Service' }}</div>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                        @empty
+                            <div class="empty-column">Belum ada invoice</div>
+                        @endforelse
+                    </div>
+                </div>
+            @endforeach
+            </div>
+        </div>
+    </div>
 
     <!-- Service Artworks Gallery Modal -->
     <div class="modal-overlay" id="serviceModalOverlay" onclick="closeServiceModal(event)">
@@ -403,6 +452,12 @@
             document.body.style.overflow = 'hidden';
         });
 
+        document.getElementById('openProgressBoard')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('progressBoardModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
         // Close TOS modal when clicking overlay
         document.getElementById('tosModal')?.addEventListener('click', function(e) {
             if (e.target === this) {
@@ -410,10 +465,22 @@
             }
         });
 
+        document.getElementById('progressBoardModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeProgressBoard();
+            }
+        });
+
+        function closeProgressBoard() {
+            document.getElementById('progressBoardModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
         // Close TOS modal with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeTosModal();
+                closeProgressBoard();
             }
         });
     </script>
@@ -462,6 +529,179 @@
         .filter-item.active {
             background-color: var(--black, #1f1b18);
             color: white;
+        }
+
+        .progress-board-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.65);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2100;
+            padding: 20px;
+        }
+
+        .progress-board-modal-overlay.active {
+            display: flex;
+        }
+
+        .progress-board-modal-content {
+            width: min(1200px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.18);
+            padding: 28px;
+        }
+
+        .progress-board-header {
+            max-width: 1200px;
+            margin: 40px auto 0;
+            padding: 0 20px 40px;
+        }
+
+        .progress-board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .progress-board-header h2 {
+            margin: 0;
+            font-size: 32px;
+            color: var(--black, #1f1b18);
+        }
+
+        .board-note {
+            margin: 0;
+            color: #5a3f48;
+            max-width: 760px;
+            line-height: 1.6;
+        }
+
+        .kanban-container {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(180px, 1fr));
+            gap: 18px;
+        }
+
+        .kanban-column {
+            background: #f7f2ee;
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100px;
+        }
+
+        .kanban-column-header {
+            padding: 18px 16px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .kanban-column-header h3 {
+            margin: 0;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .kanban-column-header span {
+            background: rgba(255,255,255,0.25);
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 13px;
+            color: white;
+        }
+
+        .kanban-column-body {
+            padding: 16px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .client-card {
+            background: white;
+            border-radius: 18px;
+            border: 1px solid #e5d7c4;
+            padding: 16px;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+            color: #312e2a;
+        }
+
+        .client-card.readonly {
+            cursor: default;
+        }
+
+        .client-card-title {
+            margin: 0 0 6px;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .client-card-subtitle {
+            margin: 0 0 12px;
+            color: #7a6c64;
+            font-size: 13px;
+        }
+
+        .client-card-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #5f4f47;
+        }
+
+        .client-card-details span {
+            background: #f5f0ea;
+            border-radius: 999px;
+            padding: 6px 10px;
+        }
+
+        .client-card-items {
+            display: grid;
+            gap: 8px;
+        }
+
+        .client-card-item {
+            background: #fff7ef;
+            color: #7a5b41;
+            border-radius: 14px;
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+
+        .empty-column {
+            color: #8c7f74;
+            font-size: 14px;
+            text-align: center;
+            padding: 24px 8px;
+            background: rgba(255,255,255,0.85);
+            border-radius: 16px;
+        }
+
+        @media (max-width: 1024px) {
+            .kanban-container {
+                grid-template-columns: repeat(2, minmax(180px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kanban-container {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* TOS Modal Styles */
