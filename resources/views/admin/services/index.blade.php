@@ -52,7 +52,7 @@
                                     @endif
                                 </td>
                                 <td class="art-title">{{ $service->name }}</td>
-                                <td>Rp {{ number_format($service->starting_price, 0, ',', '.') }}</td>
+                                <td>$ {{ number_format($service->starting_price, 0, '.', ',') }}</td>
                                 <td>
                                     @if($service->is_active)
                                         <span class="badge badge-success">Aktif</span>

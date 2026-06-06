@@ -45,8 +45,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="starting_price">Harga Awal (Rp) *</label>
-                    <input type="number" name="starting_price" id="starting_price" value="{{ old('starting_price') }}" placeholder="50000" min="0" required>
+                    <label for="starting_price">Harga Awal (USD) *</label>
+                    <input type="number" name="starting_price" id="starting_price" value="{{ old('starting_price') }}" placeholder="50" min="0" required>
                     @error('starting_price')
                         <span class="error-message">{{ $message }}</span>
                     @enderror

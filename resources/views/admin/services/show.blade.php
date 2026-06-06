@@ -43,7 +43,7 @@
 
                 <div class="info-group">
                     <h3>Harga</h3>
-                    <p class="price-display">Rp {{ number_format($service->starting_price, 0, ',', '.') }}</p>
+                    <p class="price-display">$ {{ number_format($service->starting_price, 0, '.', ',') }}</p>
                 </div>
 
                 @if(count($service->features_array) > 0)

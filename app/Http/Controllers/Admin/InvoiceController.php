@@ -93,7 +93,8 @@ class InvoiceController extends Controller
                 $item->invoice_id = $invoice->id;
                 $item->service_id = $service->id;
                 $item->service_name = $service->name;
-                $item->unit_price = $service->starting_price;
+                // Store unit_price in invoice currency: convert USD service price to IDR if needed
+                $item->unit_price = $service->starting_price * $exchangeRate;
                 $item->quantity = $itemData['quantity'];
                 $item->additional_characters = $itemData['additional_characters'] ?? 0;
                 $item->usage_type = $itemData['usage_type'];

@@ -1223,13 +1223,12 @@
     const USD_TO_IDR_RATE = 16000; // 1 USD = 16,000 IDR
     let currentCurrency = 'USD'; // Default currency
 
-    // Format currency - amount is always in IDR from services
-    function formatCurrency(amountIDR, currency = currentCurrency) {
+    // Format currency - amount passed is in USD
+    function formatCurrency(amountUSD, currency = currentCurrency) {
         if (currency === 'IDR') {
+            const amountIDR = Math.round(amountUSD * USD_TO_IDR_RATE);
             return 'Rp' + amountIDR.toLocaleString('id-ID');
         } else {
-            // Convert IDR to USD for display
-            const amountUSD = amountIDR / USD_TO_IDR_RATE;
             return '$' + amountUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
     }
@@ -1252,66 +1251,42 @@
         const unitPriceEl = document.querySelector(`#row-${rowIndex} .unit-price`);
         if (!unitPriceEl) return 0;
 
-        const unitPrice = parseInt(unitPriceEl.dataset.price) || 0;
+        const unitPriceUSD = parseFloat(unitPriceEl.dataset.price) || 0;
         const quantity = parseInt(document.querySelector(`#row-${rowIndex} .quantity-input`)?.value) || 1;
         const additionalChars = parseInt(document.querySelector(`#row-${rowIndex} .additional-chars`)?.value) || 0;
         const usageType = document.querySelector(`#row-${rowIndex} .usage-type`)?.value || 'personal';
 
-        // Base price = unit_price * quantity
-        const basePrice = unitPrice * quantity;
+        // Base price in USD
+        const baseUSD = unitPriceUSD * quantity;
 
-        // Additional characters: 50% of unit_price per character
-        const additionalCharsCost = unitPrice * 0.5 * additionalChars;
+        // Additional characters: 50% of unit_price per character (USD)
+        const additionalCharsCostUSD = unitPriceUSD * 0.5 * additionalChars;
 
         // Usage type multiplier
         const usageMultiplier = usageType === 'commercial' ? 2 : 1;
 
-        // Total = (base + additional) * usage multiplier
-        const subtotal = Math.round((basePrice + additionalCharsCost) * usageMultiplier);
+        // Total in USD = (base + additional) * usage multiplier
+        const subtotalUSD = Math.round((baseUSD + additionalCharsCostUSD) * usageMultiplier * 100) / 100;
 
         const subtotalEl = document.querySelector(`#row-${rowIndex} .subtotal`);
         if (subtotalEl) {
-            subtotalEl.textContent = formatCurrency(subtotal);
+            subtotalEl.textContent = formatCurrency(subtotalUSD, currentCurrency);
+            subtotalEl.dataset.usd = subtotalUSD;
         }
 
-        return subtotal;
+        return subtotalUSD;
     }
 
-    // Calculate grand total - only calculate subtotals, don't call calculateRowSubtotal recursively
+    // Calculate grand total - amounts calculated in USD
     function calculateGrandTotal() {
-        let total = 0;
+        let totalUSD = 0;
         document.querySelectorAll('.service-row').forEach((row) => {
-            // Extract the actual row index from the row ID (e.g., "row-0" -> 0)
-            const rowId = row.id;
-            const match = rowId.match(/^row-(\d+)$/);
-            if (match) {
-                const rowIndex = parseInt(match[1]);
-
-                // Calculate subtotal directly here (not via function to avoid recursion)
-                const unitPriceEl = document.querySelector(`#row-${rowIndex} .unit-price`);
-                if (unitPriceEl) {
-                    const unitPrice = parseInt(unitPriceEl.dataset.price) || 0;
-                    const quantity = parseInt(document.querySelector(`#row-${rowIndex} .quantity-input`)?.value) || 1;
-                    const additionalChars = parseInt(document.querySelector(`#row-${rowIndex} .additional-chars`)?.value) || 0;
-                    const usageType = document.querySelector(`#row-${rowIndex} .usage-type`)?.value || 'personal';
-
-                    const basePrice = unitPrice * quantity;
-                    const additionalCharsCost = unitPrice * 0.5 * additionalChars;
-                    const usageMultiplier = usageType === 'commercial' ? 2 : 1;
-                    const subtotal = Math.round((basePrice + additionalCharsCost) * usageMultiplier);
-
-                    total += subtotal;
-
-                    // Update subtotal display
-                    const subtotalEl = document.querySelector(`#row-${rowIndex} .subtotal`);
-                    if (subtotalEl) {
-                        subtotalEl.textContent = formatCurrency(subtotal);
-                    }
-                }
-            }
+            const rowIndex = parseInt(row.id.replace('row-', ''));
+            const subtotalUSD = calculateRowSubtotal(rowIndex);
+            totalUSD += subtotalUSD;
         });
-        document.getElementById('grandTotalUSD').textContent = formatCurrency(total, 'USD');
-        document.getElementById('grandTotalIDR').textContent = formatCurrency(total, 'IDR');
+        document.getElementById('grandTotalUSD').textContent = formatCurrency(totalUSD, 'USD');
+        document.getElementById('grandTotalIDR').textContent = formatCurrency(totalUSD, 'IDR');
     }
 
     // Add service row
@@ -1351,7 +1326,7 @@
                     </select>
                 </td>
                 <td>
-                    <span class="price-display subtotal">Rp0</span>
+                    <span class="price-display subtotal">$0.00</span>
                 </td>
                 <td>
                     <button type="button" class="remove-row-btn" onclick="removeServiceRow(${rowIndex})">
@@ -1372,8 +1347,9 @@
         const selectedOption = select.options[select.selectedIndex];
 
         if (selectedOption.value) {
-            priceSpan.textContent = formatCurrency(parseInt(selectedOption.dataset.price));
-            priceSpan.dataset.price = selectedOption.dataset.price;
+            const priceUSD = parseFloat(selectedOption.dataset.price) || 0;
+            priceSpan.textContent = formatCurrency(priceUSD, currentCurrency);
+            priceSpan.dataset.price = priceUSD;
         } else {
             priceSpan.textContent = '-';
             priceSpan.dataset.price = '0';

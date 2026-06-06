@@ -63,7 +63,7 @@
                     </div>
                     <div class="card-content">
                         <h3 class="card-title">{{ $service->name }}</h3>
-                        <p class="card-price">Mulai dari <span class="price">Rp {{ number_format($service->starting_price, 0, ',', '.') }}</span></p>
+                        <p class="card-price">Mulai dari <span class="price">$ {{ number_format($service->starting_price, 0, '.', ',') }}</span></p>
                         <button class="order-btn">
                             <span class="material-icons">shopping_cart</span>
                             Pesan Sekarang
@@ -136,7 +136,7 @@
                     <button class="modal-close-btn" onclick="closeServiceModalDirect()">×</button>
                 </div>
                 <div class="pricecoms">
-                    <p class="card-price">Mulai dari <span id="modalServicePrice" class="price">Rp 0</span></p>
+                    <p class="card-price">Mulai dari <span id="modalServicePrice" class="price">$ 0</span></p>
                 </div>
                 <div class="fiturcoms">
                     <h2>Fitur</h2>
@@ -189,8 +189,12 @@
             }
 
             // Set price
-            const formattedPrice = new Intl.NumberFormat('id-ID').format(price || 0);
-            document.getElementById('modalServicePrice').textContent = 'Rp ' + formattedPrice;
+            const formattedPrice = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+            }).format(price || 0);
+            document.getElementById('modalServicePrice').textContent = formattedPrice;
 
             // Set features
             const featuresList = document.getElementById('modalServiceFeatures');
@@ -491,8 +495,9 @@
         .coms_menu {
             padding: 20px 0;
             position: sticky;
-            top: 70px;
+            top: 85px;
             z-index: 100;
+            background-color: white;
         }
 
         .coms_menu_container {

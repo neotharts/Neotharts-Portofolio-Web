@@ -46,7 +46,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="starting_price">Harga Awal (Rp) *</label>
+                    <label for="starting_price">Harga Awal (USD) *</label>
                     <input type="number" name="starting_price" id="starting_price" value="{{ old('starting_price', $service->starting_price) }}" min="0" autocomplete="off" required>
                     @error('starting_price')
                         <span class="error-message">{{ $message }}</span>
