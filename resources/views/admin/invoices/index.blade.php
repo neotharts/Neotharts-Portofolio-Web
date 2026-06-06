@@ -1470,13 +1470,11 @@
         // Move card element
         columnCards.appendChild(draggedCard);
 
-        // Update card class
-        document.querySelectorAll('.client-card').forEach(card => {
-            card.classList.remove('unpaid', 'sketch', 'progress', 'finishing', 'done');
-            card.classList.add(newStatus);
-        });
+        // Update dragged card status class only
+        draggedCard.classList.remove('unpaid', 'sketch', 'progress', 'finishing', 'done');
+        draggedCard.classList.add(newStatus);
 
-        // Update column counts
+        // Update column counts and empty-state placeholders
         updateColumnCounts();
 
         // Send AJAX request to update status
@@ -1490,9 +1488,26 @@
     function updateColumnCounts() {
         const statuses = ['unpaid', 'sketch', 'progress', 'finishing', 'done'];
         statuses.forEach(status => {
-            const count = document.querySelectorAll(`.column-cards[data-status="${status}"] .client-card`).length;
+            const columnCards = document.querySelector(`.column-cards[data-status="${status}"]`);
+            const cardCount = columnCards ? columnCards.querySelectorAll('.client-card').length : 0;
             const countEl = document.querySelector(`.kanban-board[data-status="${status}"] .column-count`);
-            if (countEl) countEl.textContent = count;
+            if (countEl) countEl.textContent = cardCount;
+
+            if (!columnCards) {
+                return;
+            }
+
+            const emptyState = columnCards.querySelector('.empty-state');
+            if (cardCount === 0) {
+                if (!emptyState) {
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'empty-state';
+                    placeholder.innerHTML = '<span class="material-icons-outlined">inbox</span><p>Belum ada invoice</p>';
+                    columnCards.appendChild(placeholder);
+                }
+            } else if (emptyState) {
+                emptyState.remove();
+            }
         });
     }
 

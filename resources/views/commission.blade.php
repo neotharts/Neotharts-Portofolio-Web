@@ -102,10 +102,6 @@
                             <div class="client-card readonly">
                                 <div class="client-card-title">{{ $invoice->client_name ?: 'Client' }}</div>
                                 <div class="client-card-subtitle">#{{ $invoice->invoice_number }}</div>
-                                <div class="client-card-details">
-                                    <span>{{ strtoupper($invoice->payment_method ?? '-') }}</span>
-                                    <span>Rp {{ number_format($invoice->total_amount ?? 0, 0, ',', '.') }}</span>
-                                </div>
                                 @if($invoice->items->count())
                                     <div class="client-card-items">
                                         @foreach($invoice->items as $item)

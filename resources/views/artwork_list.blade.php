@@ -313,6 +313,10 @@
             document.body.style.overflow = '';
             // Reset initial render flag so next modal open doesn't animate
             isInitialRender = true;
+            // Remove artwork query param from URL
+            if (requestedArtworkId) {
+                history.pushState(null, '', window.location.pathname);
+            }
         }
 
         // Enhanced auto-open modal after full page load
